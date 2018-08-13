@@ -1,0 +1,5 @@
+exportPattern("^[[:alpha:]]+")
+importFrom("stats", "var")
+import("pedtools")
+import("ibdsim2")
+import("expm")
