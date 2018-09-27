@@ -60,8 +60,9 @@ Egeland, Pinto and Amorim, FSI:Genetics (2017), \code{http://dx.doi.org/10.1016/
 Thore Egeland <Thore.Egeland@nmbu.no>
 }
 \examples{
-p <- c(0.5, 0.5)
-M <- rbind(c(0.99, 0.01), c(0.01,0.99))
+p = c(0.5, 0.5)
+M = pedtools::mutationMatrix(alleles = 1:2, model = "proportional",
+    afreq = p, rate = 0.05)
 theta <- 0.0
 n <- c(0, 1, 1, 0) 
 kappa.num <- c(0, 1, 0)

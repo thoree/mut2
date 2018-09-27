@@ -40,7 +40,6 @@ library(Familias)
 AB = FamiliasPosterior(pedigrees, loci.proportional, datamatrix, ref = 2)
 lik1 = AB$likelihoodsPerSystem[,1]
 
-library(pedtools)
 library(pedprobr)
 library(forrel)
 # Convert data with proportional model to ped format

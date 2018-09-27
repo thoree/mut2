@@ -61,7 +61,7 @@ Magnus Dehli Vigeland and Thore Egeland
 }
 
 \seealso{
-\code{\link[IBDsim]{IBDsim}}.
+\code{\link[ibdsim2]{ibdsim2}}.
 }
 \examples{
 library(ibdsim2)

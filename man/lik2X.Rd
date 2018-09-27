@@ -45,11 +45,8 @@ Thore Egeland <Thore.Egeland@nmbu.no>
 
 
 \examples{
-library(pedtools)
 p = c(0.25,0.25,0.25, 0.25)
-R = 0
-M = pedtools::mutationMatrix(p, "equal", R)
-l1 = lik2X(1, 1:2, n = 1, p, M, 0) #Father-Daughter
-stopifnot(l1 == p[1]*p[2])
-
+M = pedmut::mutationMatrix(alleles = 1:4, model = "proportional",
+    afreq = p, rate = 0.05)
+lik2X(1, 1:2, n = 1, p, M, 0) #Father-Daughter
 }
