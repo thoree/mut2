@@ -1,3 +1,4 @@
+# added
 LRtrio = function(gMan, gMother, gChild,  afreq, M, check = TRUE ){
   if(is.null(rownames(M)) & is.null(colnames(M)) & is.null(names(afreq))){
     navn = 1:length(afreq)
