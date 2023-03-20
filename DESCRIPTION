@@ -1,11 +1,15 @@
-Package: mut2
 Type: Package
-Title: Pairwise Likelihood Ratios
+Package: mut2
+Title: Balancing mutation matrix
 Version: 1.0
-Date: 2018-8-9
-Author: Thore Egeland
+Date: 2023-03-19
+Authors@R: c(
+    person("Thore", "Egeland", , "thore.egeland@nmbu.no", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-3465-8885"))
+  )
+Description: The mutation matrix is balanced using the Metropolis - Hastings algorithm.
 Maintainer: Thore Egeland <Thore.Egeland@nmbu.no>
-Depends: R (>= 3.2.0), ibdsim2, expm
-Description: Main functionslik2 and lik2X calculate likelihoods, for autosomal and X-marker respectively, for non-inbred relationships accounting for mutation, silent alleles and theta correction. Egeland, Pinto and Amorim (2017) <DOI:10.1016/j.fsigen.2017.04.018>. 
+Depends: R (>= 3.2.0)
+Imports: pedmut
 License: GPL(>=2)
-RoxygenNote: 6.1.0
+RoxygenNote: 7.2.3
