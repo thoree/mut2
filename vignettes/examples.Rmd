@@ -1,0 +1,74 @@
+---
+title: "Examples"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r}
+library(pedmut)
+library(mut2)
+```
+
+# Example 1
+Consider a marker with $n = 4$ alleles with allele frequencies
+$p = (0.1, 0.3, 0.4, 0.2)$. Assume an equal mutation model with mutation rate $0.003$, which in this coincides with the expected mutation rate, i.e., 
+\begin{align*}
+Q=
+		\begin{pmatrix}
+			0.99700 & 0.00100 & 0.00100 & 0.00100 \\ 
+			0.00100 & 0.99700 & 0.00100 & 0.00100 \\ 
+			0.00100 & 0.00100 & 0.99700 & 0.00100 \\ 
+			0.00100 & 0.00100 & 0.00100 & 0.99700 \\ 
+		\end{pmatrix}
+		.
+\end{align*}
+The  proposed mutation matrix and the allele frequency vector,
+$(Q,p)$, does not correspond to a balanced mutation model. For instance
+\[
+p_2 q_{21} = 0.3\cdot 0.001 = 0.0003 \neq p_1q_{12} = 0.1\cdot 0.001 = 0.0001. 
+\]
+In this case the proposed matrix $Q$ is symmetric and
+therefore default balancing simplifies to 
+\begin{align*}
+		p_{ij}=q_{ij}\min \{1, \frac{p_j}{p_i} \}, \;i \neq j;
+		p_{ii}=1-\sum_{i\neq j} p_{ij},
+\end{align*}
+Balancing is achieved by
+```{r}
+    Q = mutationMatrix("equal", rate = 0.003, alleles = 1:4)
+    p = c(0.1,0.3,0.4,0.2)
+    names(p) = 1:4
+    P1 = findReversible(Q, afreq = p)
+    P1
+```
+The pair $(P_1,p)$ is balanced with expected mutation rate 0.002, which is lower than the expected for Q, 0.003. 	In this case the condition
+$q_{ji} < p_i,\, j\neq i$ holds and we can transform using the alternative transformation (`method = AV')
+\begin{align}
+p_{ij}=\frac{p_iq_{ij}+p_j q_{ji}}{2p_i},\;i \neq j,\;
+p_{ii}=1-\sum_{i\neq j} p_{ij},
+\end{align}
+which preserves the expected mutation rate:
+```{r}
+    P2 = findReversible(Q, afreq = p, method = "AV")
+    P2
+```
+
+Alternatively, the first balanced mutation matrix can be adjusted to have the required 
+expected mutation rate
+
+```{r}
+    P3 = adjustReversible(Q, P1,  afreq = p)
+    P3
+```
+
+

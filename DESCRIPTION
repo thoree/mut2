@@ -13,3 +13,7 @@ Depends: R (>= 3.2.0)
 Imports: pedmut
 License: GPL(>=2)
 RoxygenNote: 7.2.3
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
