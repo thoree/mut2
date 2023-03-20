@@ -16,17 +16,12 @@ knitr::opts_chunk$set(
 
 # mut2
 
-The aim om `mut2` is to provide functions for mutation models and exact likelihoods for pairs of individuals. Current functions include
+The aim om `mut2` is to provide functions that balance mutation matrices.
 
-* `lik2X()` : Pairwise likelihood for the X-chromosome
-* `lik2()` : Pairwise likelihood for the X-chromosome
-* `ibd1.parental` : Estimates for a pair of non-inbred individuals the probabilities of paternal origin when IBD is 1
-* `makeReversible` : An irreducible and aperiodic mutation matrix
-is tranformed to satisfy detailed balanced (DB) using the Metropolis-Hastings algorithm.
 
 ## Installation
 
-To get the lastest version, install from GitHub as follows:
+To get the last version, install from GitHub as follows:
 
 ```{r, eval = FALSE}
  # First install devtools if needed
