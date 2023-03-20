@@ -52,7 +52,7 @@ Balancing is achieved by
     P1
 ```
 The pair $(P_1,p)$ is balanced with expected mutation rate 0.002, which is lower than the expected for Q, 0.003. 	In this case the condition
-$q_{ji} < p_i,\, j\neq i$ holds and we can transform using the alternative transformation (`method = AV')
+$q_{ji} < p_i,\, j\neq i$ holds and we can transform using the alternative transformation (`method = AV`)
 \begin{align}
 p_{ij}=\frac{p_iq_{ij}+p_j q_{ji}}{2p_i},\;i \neq j,\;
 p_{ii}=1-\sum_{i\neq j} p_{ij},
