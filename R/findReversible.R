@@ -13,19 +13,24 @@
 #' @return Balanced mutation matrix. The expected mutation rate
 #' of the balanced matrix is returned as `rate`.
 #' 
-#' @details Two different approaches are implemented.
+#' @details Three different approaches are implemented.
 #' The default, \code{method = "MH"}, gives a balanced matrix with off diagonal elements
 #' 
 #' \code{q_{ij} min(1, p_j/p_i * q_{ji}/q_{ij})}
 #' 
 #' where \code{q_{ij}} and \code{p_i} are the elements of the original mutation
 #' matrix and the allele frequencies, respectively. 
-#' The alternative, \code{method = "AV"}, gives a balanced matrix with off diagonal elements
+#' The average method \code{method = "AV"}, gives a balanced matrix with off diagonal elements
 #' 
 #' \code{(p_i q_{ij} + p_j q_{ji} ) / (2p_i)}
 #' 
 #' if \code{q_{ji} < p_i, i neq j} (and may otherwise fail to balance).
 #' 
+#' The method Barker \code{method = "BA"}, gives a balanced matrix with off diagonal elements
+#' 
+#' \code{ p_j q_{ji}/(p_i q_{ij} + p_j q_{ji})}
+#' 
+#' unless \code{q_{ji} = q_{ij} =0} for some \code{ i neq j}.
 #' 
 #' @author Thore Egeland
 #' 
@@ -41,12 +46,11 @@
 #' findReversible(mutmat, method = "AV")
 #' 
 #' Q = matrix(ncol = 2, c(0.9,0.9, 0.1, 0.1))
-#' Q = matrix(ncol = 2, c(0.99, 0.01, 0.01, 0.99))
 #' p = c(0.01, 0.99)
 #' mutmat = mutationMatrix("custom", matrix = Q, alleles = 1:2)
 #' findReversible(mutmat, afreq = p)
 #' # AVerage balancing not possible:
-#' findReversible(mutmat, method = "AV", afreq = p)
+#' # findReversible(mutmat, method = "AV", afreq = p)
 
 
 findReversible = function(mutmat, method = "MH", afreq = NULL, check = TRUE){ 
@@ -76,8 +80,17 @@ findReversible = function(mutmat, method = "MH", afreq = NULL, check = TRUE){
         P1[i,j]  = (afreq[i] * mutmat[i,j] + afreq[j] * mutmat[j,i])/
                  (2 * afreq[i])
   }
+  else if (method == "BA") {
+    #Barker balancing
+    if(min(mutmat) == 0)
+      stop("BArker balancing not possible if M[i,j] = M[j,i] =0 for some i,j")
+    for (i in 1:n)
+      for (j in 1:n)
+        P1[i,j]  = afreq[j]*mutmat[j,i]*mutmat[i,j]/
+                   (afreq[i] * mutmat[i,j] + afreq[j] * mutmat[j,i])
+  }
   else
-    stop("Methods needs to be 'MH' or 'AV'")
+    stop("Methods needs to be 'MH', 'AV' or 'BA'")
   
   # Find diagonal elements
   diag(P1) = 0
