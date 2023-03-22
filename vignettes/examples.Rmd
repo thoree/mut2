@@ -19,7 +19,8 @@ library(pedmut)
 library(mut2)
 ```
 
-# Example 1
+# Example 1: Tutorial examples
+
 Consider a marker with $n = 4$ alleles with allele frequencies
 $p = (0.1, 0.3, 0.4, 0.2)$. Assume an equal mutation model with mutation rate $0.003$, which in this coincides with the expected mutation rate, i.e., 
 \begin{align*}
@@ -67,8 +68,71 @@ Alternatively, the first balanced mutation matrix can be adjusted to have the re
 expected mutation rate
 
 ```{r}
-    P3 = adjustReversible(Q, P1,  afreq = p)
+    P1.adj = adjustReversible(Q, P1,  afreq = p)
+    P1.adj
+```
+ 
+ There is also third option for balancing, the `Barker` option
+```{r}
+    P3 = findReversible(Q, afreq = p, method = "BA")
     P3
 ```
+that works if all elements of original matrix are positive.
 
+# Example 2: Extreme cases
+
+## Trivial mutation matrix
+
+Assume zero mutation rate. Then balancing leaves the matrix unchanged as it should:
+
+```{r}
+    Q = mutationMatrix("trivial", alleles = 1:4)
+    p = c(0.1,0.3,0.4,0.2)
+    names(p) = 1:4
+    P= findReversible(Q, afreq = p)
+    all(diag(P) == 1)
+    P = findReversible(Q, afreq = p, method = "AV")
+    all(diag(P) == 1)
+```
+## Always mutation
+
+Consider 
+```{r}
+    Q = mutationMatrix("custom", matrix = matrix(c(0,1,1,0), ncol = 2),
+                       alleles = 1:2)
+    p = c(0.1,0.9)
+    P = findReversible(Q, afreq = p)
+    P
+```
+The two other methods, `AV` and `BA` do not work in this case.
+
+## Equally likely mutations
+
+In this case only "MH" and "BA" work
+```{r}
+    p = c(0.1,0.9)
+    Q = mutationMatrix("custom", 
+                       matrix = matrix(rep(0.5,4), ncol = 2),
+                       alleles = 1:2, afreq = p)
+    attr(Q, "rate") = expectedMutationRate(Q, p)
+    P1 = findReversible(Q, afreq = p)
+    P3 = findReversible(Q, afreq = p, method = "BA")
+    cat("Expected mutation rates:", "\n")
+    c("R.Q" = attr(Q, "rate"), "R.MH" = attr(P1, "rate"), 
+      "R.BA" = attr(P3, "rate") )
+```
+
+## On step model
+
+```{r}
+    Q = mutationMatrix("onestep", rate = 0.003, alleles = 1:4)
+    p = c(0.1,0.3,0.4,0.2)
+    names(p) = 1:4
+    P1 = findReversible(Q, afreq = p)
+    P1
+    P2 = findReversible(Q, afreq = p, method = "BA")
+    P2
+    
+```
+ 
 
