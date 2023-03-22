@@ -30,7 +30,8 @@
 #' 
 #' \code{ p_j q_{ji}/(p_i q_{ij} + p_j q_{ji})}
 #' 
-#' unless \code{q_{ji} = q_{ij} =0} for some \code{ i neq j}.
+#' If \code{q_{ij} = 0} or \code{q_{ji} = 0}, the elements (i,j) and (j,i) of the transformed
+#' matrix becomes 0.
 #' 
 #' @author Thore Egeland
 #' 
@@ -44,6 +45,7 @@
 #' mutmat = mutationMatrix("onestep", rate = 0.02, afreq = p, alleles = 1:n)
 #' findReversible(mutmat)
 #' findReversible(mutmat, method = "AV")
+#' findReversible(mutmat, method = "BA")
 #' 
 #' Q = matrix(ncol = 2, c(0.9,0.9, 0.1, 0.1))
 #' p = c(0.01, 0.99)
@@ -81,11 +83,10 @@ findReversible = function(mutmat, method = "MH", afreq = NULL, check = TRUE){
                  (2 * afreq[i])
   }
   else if (method == "BA") {
-    #Barker balancing
-    if(min(mutmat) == 0)
-      stop("BArker balancing not possible if M[i,j] = M[j,i] =0 for some i,j")
+    #Barker balancing: P1[i,j] = 0 if q[i,j] or q[j,i] = 0
     for (i in 1:n)
       for (j in 1:n)
+        if(afreq[j]*mutmat[j,i]*mutmat[i,j] > 0)
         P1[i,j]  = afreq[j]*mutmat[j,i]*mutmat[i,j]/
                    (afreq[i] * mutmat[i,j] + afreq[j] * mutmat[j,i])
   }

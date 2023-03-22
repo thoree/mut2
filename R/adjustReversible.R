@@ -33,9 +33,9 @@
 #' library(pedmut)
 #' afreq = c(0.1, 0.3, 0.4, 0.2)
 #' names(afreq) = 1:4
-#' mutmat = mutationMatrix("onestep", alleles = 1:4, rate = 0.02)
-#' balancedMutmat = findReversible(mutmat, afreq = afreq)
-#' adj = adjustReversible(mutmat, balancedMutmat, afreq = afreq,  check = TRUE)
+#' mutmat = mutationMatrix("onestep", rate = 0.02, alleles = 1:4)
+#' adj = adjustReversible(mutmat, balancedMutmat = NULL, 
+#'                        method = "BA", afreq = afreq,  check = TRUE)
 #' attr(mutmat, "rate") - attr(adj, "rate")
 
 
