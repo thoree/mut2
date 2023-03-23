@@ -20,7 +20,7 @@
 #' 
 #' where \code{q_{ij}} and \code{p_i} are the elements of the original mutation
 #' matrix and the allele frequencies, respectively. 
-#' The average method \code{method = "AV"}, gives a balanced matrix with off diagonal elements
+#' The average method \code{method = "PM"}, gives a balanced matrix with off diagonal elements
 #' 
 #' \code{(p_i q_{ij} + p_j q_{ji} ) / (2p_i)}
 #' 
@@ -44,15 +44,15 @@
 #' names(p) = 1:n
 #' mutmat = mutationMatrix("onestep", rate = 0.02, afreq = p, alleles = 1:n)
 #' findReversible(mutmat)
-#' findReversible(mutmat, method = "AV")
+#' findReversible(mutmat, method = "PM")
 #' findReversible(mutmat, method = "BA")
 #' 
 #' Q = matrix(ncol = 2, c(0.9,0.9, 0.1, 0.1))
 #' p = c(0.01, 0.99)
 #' mutmat = mutationMatrix("custom", matrix = Q, alleles = 1:2)
 #' findReversible(mutmat, afreq = p)
-#' # AVerage balancing not possible:
-#' # findReversible(mutmat, method = "AV", afreq = p)
+#' # PM balancing not possible:
+#' # findReversible(mutmat, method = "PM", afreq = p)
 
 
 findReversible = function(mutmat, method = "MH", afreq = NULL, check = TRUE){ 
@@ -75,7 +75,7 @@ findReversible = function(mutmat, method = "MH", afreq = NULL, check = TRUE){
                                          (afreq[i] * mutmat[i,j]))
      }
   }
-  else if (method == "AV") {
+  else if (method == "PM") {
     #Try average balancing
     for (i in 1:n)
       for (j in 1:n)
@@ -91,7 +91,7 @@ findReversible = function(mutmat, method = "MH", afreq = NULL, check = TRUE){
                    (afreq[i] * mutmat[i,j] + afreq[j] * mutmat[j,i])
   }
   else
-    stop("Methods needs to be 'MH', 'AV' or 'BA'")
+    stop("Methods needs to be 'MH', 'PM' or 'BA'")
   
   # Find diagonal elements
   diag(P1) = 0
