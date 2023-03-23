@@ -94,6 +94,7 @@ Assume zero mutation rate. Then balancing leaves the matrix unchanged as it shou
     P = findReversible(Q, afreq = p, method = "AV")
     all(diag(P) == 1)
 ```
+
 ## Always mutation
 
 Consider 
@@ -122,17 +123,32 @@ In this case only "MH" and "BA" work
       "R.BA" = attr(P3, "rate") )
 ```
 
-## On step model
+## One step model
 
 ```{r}
     Q = mutationMatrix("onestep", rate = 0.003, alleles = 1:4)
     p = c(0.1,0.3,0.4,0.2)
     names(p) = 1:4
     P1 = findReversible(Q, afreq = p)
-    P1
     P2 = findReversible(Q, afreq = p, method = "BA")
-    P2
-    
 ```
  
+# SNPS
+
+```{r}
+    mu1 = 0.05
+    mu2 = 0.05
+    p = c(0.5, 0.5)
+    names(p) = 1:2
+    m = matrix(c(1 - mu1, mu2, mu1, 1 - mu2), ncol = 2)
+    Q = mutationMatrix("custom", matrix = m,  alleles = 1:2, 
+                       afreq = p)
+    attr(Q, "rate") = expectedMutationRate(Q, afreq = p)
+    P1 = findReversible(Q, afreq = p, method = "MH")
+    P2 = findReversible(Q, afreq = p, method = "AV")
+    P3 = findReversible(Q, afreq = p, method = "BA")
+    P3.adj = adjustReversible(Q, P3, afreq = p)
+```
+
+
 
