@@ -15,8 +15,9 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
-library(pedmut)
-library(mut2)
+library(pedmut, quietly = T)
+library(pedsuite, quietly = T)
+library(mut2, quietly = T)
 ```
 
 # Example 1: Tutorial examples
@@ -53,14 +54,14 @@ Balancing is achieved by
     P1
 ```
 The pair $(P_1,p)$ is balanced with expected mutation rate 0.002, which is lower than the expected for Q, 0.003. 	In this case the condition
-$q_{ji} < p_i,\, j\neq i$ holds and we can transform using the alternative transformation (`method = AV`)
+$q_{ji} < p_i,\, j\neq i$ holds and we can transform using the alternative transformation (`method = PM`)
 \begin{align}
 p_{ij}=\frac{p_iq_{ij}+p_j q_{ji}}{2p_i},\;i \neq j,\;
 p_{ii}=1-\sum_{i\neq j} p_{ij},
 \end{align}
 which preserves the expected mutation rate:
 ```{r}
-    P2 = findReversible(Q, afreq = p, method = "AV")
+    P2 = findReversible(Q, afreq = p, method = "PM")
     P2
 ```
 
@@ -77,7 +78,6 @@ expected mutation rate
     P3 = findReversible(Q, afreq = p, method = "BA")
     P3
 ```
-that works if all elements of original matrix are positive.
 
 # Example 2: Extreme cases
 
@@ -91,7 +91,7 @@ Assume zero mutation rate. Then balancing leaves the matrix unchanged as it shou
     names(p) = 1:4
     P= findReversible(Q, afreq = p)
     all(diag(P) == 1)
-    P = findReversible(Q, afreq = p, method = "AV")
+    P = findReversible(Q, afreq = p, method = "PM")
     all(diag(P) == 1)
 ```
 
@@ -105,7 +105,7 @@ Consider
     P = findReversible(Q, afreq = p)
     P
 ```
-The two other methods, `AV` and `BA` do not work in this case.
+The two other methods, `PM` and `BA` do not work in this case.
 
 ## Equally likely mutations
 
@@ -135,20 +135,62 @@ In this case only "MH" and "BA" work
  
 # SNPS
 
+The input of the below function specifies
+the allele frequency $p = (p_1, p_2)$ and a mutation matrix
+
+\begin{align*}
+Q =
+	\begin{pmatrix}
+		1-q_{12} & q_{12}  \\
+		q_{21} & 1-q_{21}
+	\end{pmatrix}
+\end{align*}
+
+LR.Q, the LR comparing "AF father of CH" to "AF and CH are unrelated", is
+calculated for all genotype combinations.
+The LR calculation is next done with Q replaced by a reversible
+mutation matrix with the same expected mutation rate giving LR.M.
+The ratio LRR = LR.M/LR.Q is found and also its expected value, ELRR.
+
 ```{r}
-    mu1 = 0.05
-    mu2 = 0.05
-    p = c(0.5, 0.5)
-    names(p) = 1:2
-    m = matrix(c(1 - mu1, mu2, mu1, 1 - mu2), ncol = 2)
-    Q = mutationMatrix("custom", matrix = m,  alleles = 1:2, 
-                       afreq = p)
-    attr(Q, "rate") = expectedMutationRate(Q, afreq = p)
-    P1 = findReversible(Q, afreq = p, method = "MH")
-    P2 = findReversible(Q, afreq = p, method = "AV")
-    P3 = findReversible(Q, afreq = p, method = "BA")
-    P3.adj = adjustReversible(Q, P3, afreq = p)
+LRR = function(p1  = 0.5, q12 = 0.05, q21 = 0.05){
+  p = c("1" = p1, "2" = 1 - p1)
+  q = matrix(c(1 - q12, q21, q12, 1 - q21), ncol = 2)
+  Q = mutationMatrix("custom", matrix = q, afreq = p, alleles = 1:2)
+
+  r = expectedMutationRate(Q, p)
+  # Reversible mutation model A with same mutation rate:
+  if (max(r/(2*p[1]), r/(2*p[2])) > 1)
+    stop("Reversible, mutation preserved matrix does not exist")
+  A = matrix(c(1-r/(2*p[1]), r/(2*p[2]), r/(2*p[1]), 1-r/(2*p[2])), ncol = 2)
+  
+  x1 = nuclearPed(father = "AF", mother = "MO", child = "CH")
+  m = marker(x1, afreq = p)
+  x1 = setMarkers(x1, m)
+  numerator = oneMarkerDistribution(x1, partialmarker = 1, ids = c("AF", "MO"), 
+                                    verbose = F)
+  x1 = setMutationModel(x1, "custom", matrix = A)
+  L1 = oneMarkerDistribution(x1, partialmarker = 1, ids = c("AF", "CH"), 
+                             verbose = F)
+  x2 = setMutationModel(x1, "custom", matrix = Q)
+  L2 = oneMarkerDistribution(x2, partialmarker = 1, ids = c("AF", "CH"), 
+                             verbose = F)
+  ELRR = sum(L1^2/L2)
+
+  list(ELRR = ELRR,
+       tab = list(LRM = L1/numerator,
+                  LRQ = L2/numerator, LRR = L1/L2))
+}
 ```
 
+The default corresponds to a stationary model and hence we get an expected LRR equal to 1:
 
+```{r}
+LRR()$ELRR
+```
+
+Next follows an example where the input matrix is far from stationary:
+```{r}
+LRR(p1 = 0.01, q12 = 0.001, q21 = 0.001)
+```
 
