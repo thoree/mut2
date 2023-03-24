@@ -33,7 +33,7 @@ The default, \code{method = "MH"}, gives a balanced matrix with off diagonal ele
 
 where \code{q_{ij}} and \code{p_i} are the elements of the original mutation
 matrix and the allele frequencies, respectively. 
-The average method \code{method = "AV"}, gives a balanced matrix with off diagonal elements
+The average method \code{method = "PM"}, gives a balanced matrix with off diagonal elements
 
 \code{(p_i q_{ij} + p_j q_{ji} ) / (2p_i)}
 
@@ -43,7 +43,8 @@ The method Barker \code{method = "BA"}, gives a balanced matrix with off diagona
 
 \code{ p_j q_{ji}/(p_i q_{ij} + p_j q_{ji})}
 
-unless \code{q_{ji} = q_{ij} =0} for some \code{ i neq j}.
+If \code{q_{ij} = 0} or \code{q_{ji} = 0}, the elements (i,j) and (j,i) of the transformed
+matrix becomes 0.
 }
 \examples{
 library(pedmut)
@@ -52,14 +53,15 @@ p = 1:n/sum(1:n)
 names(p) = 1:n
 mutmat = mutationMatrix("onestep", rate = 0.02, afreq = p, alleles = 1:n)
 findReversible(mutmat)
-findReversible(mutmat, method = "AV")
+findReversible(mutmat, method = "PM")
+findReversible(mutmat, method = "BA")
 
 Q = matrix(ncol = 2, c(0.9,0.9, 0.1, 0.1))
 p = c(0.01, 0.99)
 mutmat = mutationMatrix("custom", matrix = Q, alleles = 1:2)
 findReversible(mutmat, afreq = p)
-# AVerage balancing not possible:
-# findReversible(mutmat, method = "AV", afreq = p)
+# PM balancing not possible:
+# findReversible(mutmat, method = "PM", afreq = p)
 }
 \author{
 Thore Egeland
