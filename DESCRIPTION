@@ -2,15 +2,18 @@ Type: Package
 Package: mut2
 Title: Balancing mutation matrix
 Version: 1.0
-Date: 2023-03-19
+Date: 2023-03-28
 Authors@R: c(
     person("Thore", "Egeland", , "thore.egeland@nmbu.no", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-3465-8885"))
   )
 Description: The mutation matrix is balanced using the Metropolis - Hastings algorithm.
 Maintainer: Thore Egeland <Thore.Egeland@nmbu.no>
-Depends: R (>= 3.2.0)
-Imports: pedmut
+Depends: 
+  pedtools (>= 1.1.0),
+  pedmut,
+  pedprobr (>= 0.4),
+  R (>= 3.2.0)
 License: GPL(>=2)
 RoxygenNote: 7.2.3
 Suggests: 
