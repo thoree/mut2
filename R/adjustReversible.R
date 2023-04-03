@@ -46,7 +46,7 @@ adjustReversible = function(mutmat, balancedMutmat, method = "MH",
     afreq = attr(mutmat, "afreq")
 
   if(is.null(balancedMutmat))
-    balancedMutmat = findReversible(mutmat, method = method, 
+    balancedMutmat = makeReversible(mutmat, method = method, 
                                      afreq = afreq, check = check)
     
   if(check){
