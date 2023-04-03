@@ -6,10 +6,10 @@
 #' @param M List of mutation matrices, one for each marker.
 #' @param R List of reversed mutation matrices, one for each marker.
 #' @param markerNames Character vector, names of markers
-#' @param method Character. Reversing method.
-#' @param ped A \code{ped} object.
+#' @param method Character, reversing method.
+#' @param ped1 A \code{ped} object.
 #' @param ids A numeric with ID labels of one or more pedigree members.
-#' @param nsim. Integer.     
+#' @param nsim Integer.     
 #' @param seed Integer.
 #' 
 #' @details

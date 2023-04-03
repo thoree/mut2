@@ -19,6 +19,7 @@ library(pedmut, quietly = T)
 library(pedsuite, quietly = T)
 library(mut2, quietly = T)
 library(xtable, quietly = T)
+library(forrel, quietly = T)
 ```
 
 # Example 1: Tutorial examples
@@ -83,7 +84,7 @@ expected mutation rate
 # Example 2: Comparing transformations
 
 We first compare PM to MH.
-```{r, cache = TRUE}
+```{r, cache = TRUE, eval = F}
 db = NorwegianFrequencies
 nAlleles = unlist(lapply(db, length))
 mN = names(db)
@@ -110,7 +111,7 @@ tab1 = xtable(res1, digits = c(2,3,4,2,2,3,4,2,1), caption = "The")
 ```
 
 We then compare PM to MH on a log scale.
-```{r, cache = TRUE, echo = F}
+```{r, cache = TRUE, echo = F, eval = F}
 db = NorwegianFrequencies
 nAlleles = unlist(lapply(db, length))
 mN = names(db)
@@ -138,7 +139,7 @@ tab2 = xtable(res2, digits = c(2,3,4,2,2,3,4,2,1), caption = "The")
 
 We finally compare BA to MH, both adjusted,  on a log scale.
 
-```{r, cache = TRUE, echo = F}
+```{r, cache = TRUE, echo = F,eval = F}
 db = NorwegianFrequencies
 nAlleles = unlist(lapply(db, length))
 mN = names(db)
@@ -172,7 +173,7 @@ tab3 = xtable(res3, digits = c(2,3,4,2,2,3,4,2,1), caption = "The")
 ```
 
 We calculate the root mean square errors:
-```{r}
+```{r,eval = F}
 RMSQ.PM = sqrt(sum(res1[,"PMmuM"]^2) + sum(res1[,"PMsigma"]^2))
 RMSQ.BA = sqrt(sum(res3[,"BAmuM"]^2) + sum(res3[,"BAsigma"]^2))
 RMSQ.MH = sqrt(sum(res3[,"MHmuM"]^2) + sum(res3[,"MHsigma"]^2))

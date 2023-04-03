@@ -11,6 +11,7 @@ Description: The mutation matrix is made using three versions of the Metropolis 
 Maintainer: Thore Egeland <Thore.Egeland@nmbu.no>
 Depends: 
   pedtools (>= 1.1.0),
+  forrel,
   pedmut,
   pedprobr (>= 0.4),
   R (>= 3.2.0)

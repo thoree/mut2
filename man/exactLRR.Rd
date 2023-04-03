@@ -47,7 +47,7 @@ ped = nuclearPed(1)
 p = c("1" = 0.2, "2" = 0.8)
 M = mutationMatrix("equal", afreq = p, alleles = 1:length(p), rate = 0.01)
 R = makeReversible(M, method = "PM", afreq = p)
-exactLRR(M, R, ln = F)
+exactLRR(M, R, ln = FALSE)
 
 \dontrun{
 p = NorwegianFrequencies[[1]]

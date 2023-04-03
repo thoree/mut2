@@ -22,15 +22,15 @@ simLRR(
 
 \item{markerNames}{Character vector, names of markers}
 
-\item{method}{Character. Reversing method.}
+\item{method}{Character, reversing method.}
+
+\item{ped1}{A \code{ped} object.}
 
 \item{ids}{A numeric with ID labels of one or more pedigree members.}
 
+\item{nsim}{Integer.}
+
 \item{seed}{Integer.}
-
-\item{ped}{A \code{ped} object.}
-
-\item{nsim.}{Integer.}
 }
 \value{
 LRR

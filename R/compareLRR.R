@@ -8,8 +8,8 @@
 #' @param ids A numeric with ID labels 
 #' of one or more pedigree members.
 #' @param method Character specifying reversing method.
-#' @param character adjust Logical.
-#' @param character ln Logical.
+#' @param adjust character  Logical.
+#' @param ln character  Logical.
 #' 
 #' @return Statistcs evaluation transformation
 #' 

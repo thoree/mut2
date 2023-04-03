@@ -16,9 +16,11 @@ compareLRR(M, R, ped = nuclearPed(1), ids = c(1, 3), ln = FALSE)
 \item{ids}{A numeric with ID labels 
 of one or more pedigree members.}
 
+\item{ln}{character  Logical.}
+
 \item{method}{Character specifying reversing method.}
 
-\item{character}{ln Logical.}
+\item{adjust}{character  Logical.}
 }
 \value{
 Statistcs evaluation transformation
