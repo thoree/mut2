@@ -42,8 +42,8 @@ M[[2]] = mutationMatrix("equal", afreq = p, alleles = 1:length(p), rate = 0.05)
 R[[1]] = makeReversible(M[[1]], method = "PM", afreq = p)
 R[[2]] = makeReversible(M[[2]], method = "PM", afreq = p)
 names(M) = names(R) = paste0("L", 1:2)
-res2 = compareLRR(M,R)
-
+res2 = compareLRR(M, R)
+res3 = compareLRR(M, R, ln = TRUE)
 }
 \seealso{
 [makeReversible()].

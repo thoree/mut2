@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 library(pedmut, quietly = T)
 library(pedsuite, quietly = T)
 library(mut2, quietly = T)
+library(xtable, quietly = T)
 ```
 
 # Example 1: Tutorial examples
@@ -50,7 +51,7 @@ Balancing is achieved by
     Q = mutationMatrix("equal", rate = 0.003, alleles = 1:4)
     p = c(0.1,0.3,0.4,0.2)
     names(p) = 1:4
-    P1 = findReversible(Q, afreq = p)
+    P1 = makeReversible(Q, afreq = p)
     P1
 ```
 The pair $(P_1,p)$ is balanced with expected mutation rate 0.002, which is lower than the expected for Q, 0.003. 	In this case the condition
@@ -61,7 +62,7 @@ p_{ii}=1-\sum_{i\neq j} p_{ij},
 \end{align}
 which preserves the expected mutation rate:
 ```{r}
-    P2 = findReversible(Q, afreq = p, method = "PM")
+    P2 = makeReversible(Q, afreq = p, method = "PM")
     P2
 ```
 
@@ -75,11 +76,109 @@ expected mutation rate
  
  There is also third option for balancing, the `Barker` option
 ```{r}
-    P3 = findReversible(Q, afreq = p, method = "BA")
+    P3 = makeReversible(Q, afreq = p, method = "BA")
     P3
 ```
 
-# Example 2: Extreme cases
+# Example 2: Comparing transformations
+
+We first compare PM to MH.
+```{r, cache = TRUE}
+db = NorwegianFrequencies
+nAlleles = unlist(lapply(db, length))
+mN = names(db)
+mN = mN[nAlleles < 11]
+db= db[mN]
+
+M = lapply(db, function(x){
+                          mat = mutationMatrix("stepwise",
+                          alleles = names(x),
+                          rate = 0.001, 
+                          rate2 = 1e-05,
+                          range = 0.1,
+                          afreq = x)
+          mat
+          })
+R = lapply(M, function(x) makeReversible(x, method = "PM"))
+resPM = compareLRR(M, R)
+R = lapply(M, function(x) makeReversible(x, method = "MH"))
+resMH = compareLRR(M, R)
+res1 = cbind(t(resPM), t(resMH))
+colnames(res1) = c("PMmin", "PMmuM", "PMsigma", "PMmax",
+                 "MHmin", "MHmuM", "MHsigma", "MHmax") 
+tab1 = xtable(res1, digits = c(2,3,4,2,2,3,4,2,1), caption = "The")
+```
+
+We then compare PM to MH on a log scale.
+```{r, cache = TRUE, echo = F}
+db = NorwegianFrequencies
+nAlleles = unlist(lapply(db, length))
+mN = names(db)
+mN = mN[nAlleles < 11]
+db= db[mN]
+
+M = lapply(db, function(x){
+                          mat = mutationMatrix("stepwise",
+                          alleles = names(x),
+                          rate = 0.001, 
+                          rate2 = 1e-05,
+                          range = 0.1,
+                          afreq = x)
+          mat
+          })
+R = lapply(M, function(x) makeReversible(x, method = "PM"))
+resPM = compareLRR(M, R, ln = TRUE)
+R = lapply(M, function(x) makeReversible(x, method = "MH"))
+resMH = compareLRR(M, R, ln = TRUE)
+res2 = cbind(t(resPM), t(resMH))
+colnames(res2) = c("PMmin", "PMmuM", "PMsigma", "PMmax",
+                 "MHmin", "MHmuM", "MHsigma", "MHmax") 
+tab2 = xtable(res2, digits = c(2,3,4,2,2,3,4,2,1), caption = "The")
+```
+
+We finally compare BA to MH, both adjusted,  on a log scale.
+
+```{r, cache = TRUE, echo = F}
+db = NorwegianFrequencies
+nAlleles = unlist(lapply(db, length))
+mN = names(db)
+mN = mN[nAlleles < 11]
+n = length(mN)
+db = db[mN]
+
+M = lapply(db, function(x){
+                          mat = mutationMatrix("stepwise",
+                          alleles = names(x),
+                          rate = 0.001, 
+                          rate2 = 1e-05,
+                          range = 0.1,
+                          afreq = x)
+          mat
+          })
+R = lapply(M, function(x) makeReversible(x, method = "BA"))
+RA = R
+for(i in 1:n)
+  RA[[i]] = adjustReversible(M[[i]], R[[i]])
+resBA = compareLRR(M, RA, ln = TRUE)
+
+R = lapply(M, function(x) makeReversible(x, method = "MH"))
+for(i in 1:n)
+  RA[[i]] = adjustReversible(M[[i]], R[[i]])
+resMH = compareLRR(M, RA, ln = TRUE)
+res3 = cbind(t(resBA), t(resMH))
+colnames(res3) = c("BAmin", "BAmuM", "BAsigma", "BAmax",
+                 "MHmin", "MHmuM", "MHsigma", "MHmax") 
+tab3 = xtable(res3, digits = c(2,3,4,2,2,3,4,2,1), caption = "The")
+```
+
+We calculate the root mean square errors:
+```{r}
+RMSQ.PM = sqrt(sum(res1[,"PMmuM"]^2) + sum(res1[,"PMsigma"]^2))
+RMSQ.BA = sqrt(sum(res3[,"BAmuM"]^2) + sum(res3[,"BAsigma"]^2))
+RMSQ.MH = sqrt(sum(res3[,"MHmuM"]^2) + sum(res3[,"MHsigma"]^2))
+data.frame(RMSQ.MH, RMSQ.PM, RMSQ.BA)
+```
+# Example 3: Extreme cases
 
 ## Trivial mutation matrix
 
@@ -89,9 +188,9 @@ Assume zero mutation rate. Then balancing leaves the matrix unchanged as it shou
     Q = mutationMatrix("trivial", alleles = 1:4)
     p = c(0.1,0.3,0.4,0.2)
     names(p) = 1:4
-    P= findReversible(Q, afreq = p)
+    P= makeReversible(Q, afreq = p)
     all(diag(P) == 1)
-    P = findReversible(Q, afreq = p, method = "PM")
+    P =makeReversible(Q, afreq = p, method = "PM")
     all(diag(P) == 1)
 ```
 
@@ -102,7 +201,7 @@ Consider
     Q = mutationMatrix("custom", matrix = matrix(c(0,1,1,0), ncol = 2),
                        alleles = 1:2)
     p = c(0.1,0.9)
-    P = findReversible(Q, afreq = p)
+    P = makeReversible(Q, afreq = p)
     P
 ```
 The two other methods, `PM` and `BA` do not work in this case.
@@ -116,8 +215,8 @@ In this case only "MH" and "BA" work
                        matrix = matrix(rep(0.5,4), ncol = 2),
                        alleles = 1:2, afreq = p)
     attr(Q, "rate") = expectedMutationRate(Q, p)
-    P1 = findReversible(Q, afreq = p)
-    P3 = findReversible(Q, afreq = p, method = "BA")
+    P1 = makeReversible(Q, afreq = p)
+    P3 = makeReversible(Q, afreq = p, method = "BA")
     cat("Expected mutation rates:", "\n")
     c("R.Q" = attr(Q, "rate"), "R.MH" = attr(P1, "rate"), 
       "R.BA" = attr(P3, "rate") )
@@ -129,8 +228,8 @@ In this case only "MH" and "BA" work
     Q = mutationMatrix("onestep", rate = 0.003, alleles = 1:4)
     p = c(0.1,0.3,0.4,0.2)
     names(p) = 1:4
-    P1 = findReversible(Q, afreq = p)
-    P2 = findReversible(Q, afreq = p, method = "BA")
+    P1 = makeReversible(Q, afreq = p)
+    P2 = makeReversible(Q, afreq = p, method = "BA")
 ```
  
 # SNPS
