@@ -5,13 +5,10 @@
 #' @param M List of mutations matrices, typically not reversed
 #' @param R List of reversed mutations matrices
 #' @param ped A \code{ped} object
-#' @param ids A numeric with ID labels 
-#' of one or more pedigree members.
-#' @param method Character specifying reversing method.
-#' @param adjust character  Logical.
+#' @param ids A numeric with ID labels of one or more pedigree members.
 #' @param ln character  Logical.
 #' 
-#' @return Statistcs evaluation transformation
+#' @return Statistics evaluation transformation
 #' 
 #' 
 #' @seealso [makeReversible()].

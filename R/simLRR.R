@@ -64,6 +64,7 @@ simLRR = function(M, R = NULL, markerNames, method = "PM", ped1 = nuclearPed(1),
   
   #Add markers with mutation matrices M
   ped2 = ped1
+  unr = list(singleton(ids[1]), singleton(ids[2]))
   if (n == 1){
         ped1 = addMarker(ped1, mutmod = M, afreq = attr(M, "afreq"), name = mN)
         ped2 = addMarker(ped2, mutmod = R, afreq = attr(R, "afreq"), name = mN)
@@ -81,13 +82,21 @@ simLRR = function(M, R = NULL, markerNames, method = "PM", ped1 = nuclearPed(1),
   likR = unlist(lapply(simR, function(x) prod(likelihood(x))))
   LRR.M = likM/likR
   
+  unr.M = lapply(simM, function(x) transferMarkers(x, unr))
+  likunr.M = unlist(lapply(unr.M, function(x) prod(likelihood(x))))
+  LR.M = likM/likunr.M
+  
   # Simulations under denominator
   simR = profileSim(ped2, N = nsim, ids = ids)
   simM = lapply(simR, function(x) transferMarkers(x, ped1, erase = FALSE))
   likM = unlist(lapply(simM, function(x) prod(likelihood(x))))
   likR = unlist(lapply(simR, function(x) prod(likelihood(x))))
   LRR.R = likM/likR
+  
+  unr.R = lapply(simR, function(x) transferMarkers(x, unr))
+  likunr.R = unlist(lapply(unr.R, function(x) prod(likelihood(x))))
+  LR.R= likR/likunr.M
 
-  data.frame(LRR.M = LRR.M, LRR.R = LRR.R)
+  data.frame(LRR.M = LRR.M, LRR.R = LRR.R, LR.M = LR.M, LR.R = LR.R)
 }
 
