@@ -51,7 +51,7 @@
 #' kappa.den <- c(1, 0, 0)
 #' alpha <- c(0, 0.5,0.5, 0)
 #' beta = alpha[1]+alpha[4]
-#' lik1 = lik2(g1 = c(1,1), g2 = c(2,2), n, p, M, kappa.num, alpha, theta, beta = beta)
+#' lik1 = lik2(g1 = c(1,1), g2 = c(2,2), n, p, M, kappa.num, alpha, theta)
 #' lik0 = p[1]^2*p[2]^2
 #' LR = lik1/lik0
 #' LR
