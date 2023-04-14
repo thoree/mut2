@@ -13,17 +13,12 @@ compareLRR(M, R, ped = nuclearPed(1), ids = c(1, 3), ln = FALSE)
 
 \item{ped}{A \code{ped} object}
 
-\item{ids}{A numeric with ID labels 
-of one or more pedigree members.}
+\item{ids}{A numeric with ID labels of one or more pedigree members.}
 
 \item{ln}{character  Logical.}
-
-\item{method}{Character specifying reversing method.}
-
-\item{adjust}{character  Logical.}
 }
 \value{
-Statistcs evaluation transformation
+Statistics evaluation transformation
 }
 \description{
 The ratio Z = LR(M,p)/LR(R,p) is calculated. for a SNP marker
