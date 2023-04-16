@@ -5,7 +5,7 @@
 \title{Estimates for a pair of non-inbred individuals the probabilities of parental
 origin when IBD is 1}
 \usage{
-ibd1.parental(x, id.pair, Nsim, cM = 10000, verbose = F)
+ibd1.parental(x, id.pair, Nsim, cM = 10000, verbose = FALSE)
 }
 \arguments{
 \item{x}{A `ped` object.}

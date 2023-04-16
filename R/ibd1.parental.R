@@ -24,7 +24,7 @@
 #' @importFrom ibdsim2 findPattern ibdsim uniformMap
 #' @export
 #' 
-ibd1.parental = function(x, id.pair, Nsim, cM = 10000, verbose = F) {
+ibd1.parental = function(x, id.pair, Nsim, cM = 10000, verbose = FALSE) {
     map = ibdsim2::uniformMap(cM = cM)
     sim = ibdsim2::ibdsim(x, N = Nsim, map = map, model = "haldane", verbose = verbose)
     alpha.sample = vapply(sim, function(s) {

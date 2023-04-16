@@ -17,7 +17,7 @@
 #' p = 1:n/sum(1:n)
 #' names(p) = 1:n
 #' mutmat = mutationMatrix("equal", afreq = p, rate = 0.5)
-#' reasonableMutationMatrix(mutmat, p, verbose = F)
+#' reasonableMutationMatrix(mutmat, p, verbose = FALSE)
 #' 
 
 reasonableMutationMatrix = function(mutmat, p, verbose = FALSE){

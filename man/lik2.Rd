@@ -4,7 +4,7 @@
 \alias{lik2}
 \title{Pairwise likelihood with mutation}
 \usage{
-lik2(g1, g2, n, p, M, kappa, alpha, theta)
+lik2(g1, g2, n, p, M, kappa, alpha, theta = 0)
 }
 \arguments{
 \item{g1}{Genotype, two integers giving the alleles for individual 1.}
@@ -22,16 +22,16 @@ paternal-maternal, maternal-paternal and maternal-maternal alleles.}
 for 0,1,2 IBD alleles.}
 
 \item{alpha}{Four probabilities, summing to 1, giving the probability, in
-case IBD=1, that the alleles are paternal-paternal, paternal-maternal,
+the case IBD = 1, that the alleles are paternal-paternal, paternal-maternal,
 maternal-paternal, and maternal-maternal.}
 
 \item{theta}{Real in `[0,1]`. Kinship coefficient.}
 }
 \value{
-likelihood, real.
+Likelihood.
 }
 \description{
-Detailed balance (DB) is assumed for the mutation model and the likelihood is
+Reversibility is assumed for the mutation model and the likelihood is
 calculated for a pair of non-inbred individuals.
 }
 \details{
@@ -40,42 +40,33 @@ where the alleles may or may not differ. We calculate the likelihood assuming
 a relationship described by kappa.
 }
 \examples{
-# Parent offspring relationship likelihood
+# Example 1 Parent offspring relationship
 p = c("1" = 0.2, "2" = 0.8)
 M = mutationMatrix("proportional", afreq = p, rate = 0.01)
-theta <- 0.0
-n <- c(0, 1, 1, 0)
-kappa.num <- c(0, 1, 0)
-alpha <- c(0, 0.5, 0.5, 0)
-l1 = lik2(c(1,1), c(2,2), n, p, M, kappa = kappa.num, alpha, theta)
-# Exact
+n = c(0, 1, 1, 0)
+kappa =  c(0, 1, 0)
+alpha =  c(0, 0.5, 0.5, 0)
+l1 = lik2(c(1,1), c(2,2), n, p, M, kappa, alpha)
+# Calculated using formula
 gamma = mut2::expectedMutationRate(M, p)
 K = gamma/(1- sum(p^2))
-l1.exact = p[1]^2*K*p[2]^2
+l1.formula = p[1]^2*K*p[2]^2
+l1 - l1.formula
 
-LR =l1/(p[1]^2*p[2]^2)
-LR
-
-# Double first cousins
-p = c("1" = 0.2, "2" = 0.8)
-M = mutationMatrix("proportional", afreq = p, rate = 0.005)
-theta <- 0.0
-n <- c(0, 4, 4, 0) 
-kappa.num <- c(9,6,1)/16
-kappa.den <- c(1, 0, 0)
-alpha <- c(0, 0.5,0.5, 0)
-beta = alpha[1]+alpha[4]
-lik1 = lik2(g1 = c(1,1), g2 = c(2,2), n, p, M, kappa.num, alpha, theta)
-lik0 = p[1]^2*p[2]^2
+# Example 2 Double first cousins
+n = c(0, 4, 4, 0) 
+kappa = c(9,6,1)/16
+alpha = c(0, 0.5,0.5, 0)
+g1 = c(1,1); g2 = c(2,2)
+lik1 = lik2(g1, g2, n, p, M, kappa, alpha)
+lik0 = lik2(g1, g2, n = rep(0,4), p, M, 
+            kappa = c(1,0,0), alpha = rep(0,4))
 LR = lik1/lik0
-LR
-K = 0.005/(1- sum(p^2))
-#Exact
-LR.exact = kappa.num[1] + 
-kappa.num[2]*(1-(1-K)^4)+ 
-kappa.num[3]*(1-(1-K)^4) * (1-(1-K)^4)
-LR.exact
-
+# Formula
+LR.formula = kappa[1] + 
+           kappa[2]*(1-(1-K)^4)+ 
+           kappa[3]*(1-(1-K)^4) * (1-(1-K)^4)
+LR - LR.formula            
 }
 \references{
 Egeland, Pinto and Amorim, FSI:Genetics (2017),
