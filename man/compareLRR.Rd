@@ -2,7 +2,7 @@
 % Please edit documentation in R/compareLRR.R
 \name{compareLRR}
 \alias{compareLRR}
-\title{Ratio of LRs are compared for different tranformations}
+\title{Ratio of LRs are compared for different transformations}
 \usage{
 compareLRR(M, R, ped = nuclearPed(1), ids = c(1, 3), ln = FALSE)
 }
@@ -21,17 +21,21 @@ compareLRR(M, R, ped = nuclearPed(1), ids = c(1, 3), ln = FALSE)
 Statistics evaluation transformation
 }
 \description{
-The ratio Z = LR(M,p)/LR(R,p) is calculated. for a SNP marker
+The ratio Z = LR(M,p)/LR(R,p) is calculated one marker.
 }
 \examples{
+# Example One marker. PO case.
+library(pedmut)
+library(pedprobr)
 ped = nuclearPed(1)
 p = c("1" = 0.2, "2" = 0.8)
-M = mutationMatrix("equal", afreq = p, alleles = 1:length(p), rate = 0.01)
+M = mutationMatrix("equal", afreq = p, alleles = 1:length(p), 
+                   rate = 0.01)
 R = makeReversible(M, method = "PM", afreq = p)
 M = list(M)
 names(M) = "L1"
 R = list(R)
-res1 = compareLRR(M,R)
+res1 = compareLRR(M, R)
 
 M =  R = list()
 M[[1]] = mutationMatrix("equal", afreq = p, alleles = 1:length(p), rate = 0.01)

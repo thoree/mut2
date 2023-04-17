@@ -4,10 +4,12 @@
 \alias{simLR}
 \title{Simulate LRRR}
 \usage{
-simLR(M, ped1 = nuclearPed(1), ids = c(1, 3), nsim = 2, seed = NULL)
+simLR(M, R, ped1 = nuclearPed(1), ids = c(1, 3), nsim = 2, seed = NULL)
 }
 \arguments{
 \item{M}{List of mutation matrices, one for each marker.}
+
+\item{R}{List of reversed mutation matrices, one for each marker.}
 
 \item{ped1}{A \code{ped} object.}
 
@@ -16,12 +18,6 @@ simLR(M, ped1 = nuclearPed(1), ids = c(1, 3), nsim = 2, seed = NULL)
 \item{nsim}{Integer.}
 
 \item{seed}{Integer.}
-
-\item{R}{List of reversed mutation matrices, one for each marker.}
-
-\item{markerNames}{Character vector, names of markers}
-
-\item{method}{Character, reversing method.}
 }
 \value{
 LRR
@@ -53,7 +49,6 @@ M = lapply(NorwegianFrequencies, function(x){
   afreq = x)
   mat
 })
-mN = names(NorwegianFrequencies)
 simLRR(M, markerNames = mN, nsim = 10, seed = 177)
 }
 }

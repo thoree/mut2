@@ -30,8 +30,7 @@ maternal-paternal, and maternal-maternal.}
 \item{K}{Real. Proportionality factor in proportional model}
 }
 \value{
-LR and the lower bound,  assuming no allele sharing, and 
-the upper bound assuming the individuals to be homozygous for the rarest allele.
+LR.
 }
 \description{
 Reversibility is assumed for the mutation model and the LR is
@@ -52,7 +51,7 @@ alpha = c(0, 0.5, 0.5, 0)
 gamma = mut2::expectedMutationRate(M, p)
 K = gamma/(1- sum(p^2))
 LR = LRmut(g1, g2, n, p, M, kappa = kappa, alpha, K = NULL)
-LR$LR - K # Difference implementation - exact
+LR - K # Difference implementation - exact
 
 }
 \references{

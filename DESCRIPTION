@@ -13,12 +13,14 @@ Description: The mutation matrix is made reversible using three versions of
 Maintainer: Thore Egeland <Thore.Egeland@nmbu.no>
 Depends: 
   pedtools (>= 1.1.0),
+  R (>= 3.2.0)
+Imports: 
+  pedtools (>= 1.1.0),
   ibdsim2,
   expm,
   forrel,
   pedmut,
-  pedprobr (>= 0.4),
-  R (>= 3.2.0)
+  pedprobr (>= 0.4)
 License: GPL(>=2)
 RoxygenNote: 7.2.3
 Suggests: 

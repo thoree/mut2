@@ -1,4 +1,4 @@
-#' Ratio of LRs and likelihood exact for one marker
+#' Ratio of LRs and likelihoods calculated exactly for one marker
 #' 
 #' The ratio Z = LR(M,p)/LR(R,p) is calculated exactly.
 #'  
@@ -10,8 +10,8 @@
 #' @param ids A numeric with ID labels 
 #' of one or more pedigree members.
 #' @param method Character specifying reversing method.
-#' @param character adjust Logical.
-#' @param character ln Logical.
+#' @param adjust Logical.
+#' @param ln Logical.
 #' 
 #' @return Expected ratio and likelihoods
 #' 
@@ -45,7 +45,7 @@
 #' }
 
 exactLRR = function(M, R = NULL, afreq = NULL, ped = nuclearPed(1), ids = c(1,3),
-                    method = "PM", adjust = FALSE, ln = F){
+                    method = "PM", adjust = FALSE, ln = FALSE){
   if(is.null(afreq))
     afreq = attr(M, "afreq")
   m = marker(ped, afreq = afreq)

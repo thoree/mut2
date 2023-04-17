@@ -1,6 +1,6 @@
-#' Ratio of LRs are compared for different tranformations
+#' Ratio of LRs are compared for different transformations
 #' 
-#' The ratio Z = LR(M,p)/LR(R,p) is calculated. for a SNP marker
+#' The ratio Z = LR(M,p)/LR(R,p) is calculated one marker.
 #'  
 #' @param M List of mutations matrices, typically not reversed
 #' @param R List of reversed mutations matrices
@@ -8,24 +8,32 @@
 #' @param ids A numeric with ID labels of one or more pedigree members.
 #' @param ln character  Logical.
 #' 
-#' @return Statistics evaluation transformation
+#' @return The smallest value (min), the expected value and standard deviation wrt the
+#' numerator and the largest value.
+#' 
+#' @details This gies summary statistics, the complete distribution for one marker
+#' is provided by mut2::exactLRR.
 #' 
 #' 
-#' @seealso [makeReversible()].
+#' @seealso [exactLRR()].
 #' 
 #' @author Thore Egeland.
 #' 
 #' @export
 #' 
 #' @examples
+#' # Example One marker. PO case.
+#' library(pedmut)
+#' library(pedprobr)
 #' ped = nuclearPed(1)
 #' p = c("1" = 0.2, "2" = 0.8)
-#' M = mutationMatrix("equal", afreq = p, alleles = 1:length(p), rate = 0.01)
+#' M = mutationMatrix("equal", afreq = p, alleles = 1:length(p), 
+#'                    rate = 0.01)
 #' R = makeReversible(M, method = "PM", afreq = p)
 #' M = list(M)
 #' names(M) = "L1"
 #' R = list(R)
-#' res1 = compareLRR(M,R)
+#' res1 = compareLRR(M, R)
 #' 
 #' M =  R = list()
 #' M[[1]] = mutationMatrix("equal", afreq = p, alleles = 1:length(p), rate = 0.01)
@@ -35,6 +43,7 @@
 #' names(M) = names(R) = paste0("L", 1:2)
 #' res2 = compareLRR(M, R)
 #' res3 = compareLRR(M, R, ln = TRUE)
+#' 
 compareLRR = function(M, R, ped = nuclearPed(1), ids = c(1,3), ln = FALSE){
   n = length(M)
   if (n == 1){

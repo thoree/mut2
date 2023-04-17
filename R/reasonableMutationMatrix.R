@@ -2,7 +2,7 @@
 #' 
 #' Entries where  pj < mij are unreasonable and are detected
 #' @param mutmat A mutation matrix.
-#' @param afreq A vector with allele frequencies 
+#' @param p A vector with allele frequencies 
 #' of the same length as the size of mutmat.
 #' @param verbose Logical.
 #' 
@@ -16,7 +16,7 @@
 #' n = 4
 #' p = 1:n/sum(1:n)
 #' names(p) = 1:n
-#' mutmat = mutationMatrix("equal", afreq = p, rate = 0.5)
+#' mutmat = mutationMatrix("equal", p, rate = 0.5)
 #' reasonableMutationMatrix(mutmat, p, verbose = FALSE)
 #' 
 

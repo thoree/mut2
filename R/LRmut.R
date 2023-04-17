@@ -17,8 +17,7 @@
 #' @param theta Real in `[0,1]`. Kinship coefficient.
 #' @param K Real. Proportionality factor in proportional model
 #' 
-#' @return LR and the lower bound,  assuming no allele sharing, and 
-#' the upper bound assuming the individuals to be homozygous for the rarest allele.
+#' @return LR.
 #' 
 #' @author Thore Egeland <Thore.Egeland@nmbu.no>
 #' @references Egeland, Pinto and Amorim, FSI:Genetics (2017),
@@ -40,7 +39,7 @@
 #' gamma = mut2::expectedMutationRate(M, p)
 #' K = gamma/(1- sum(p^2))
 #' LR = LRmut(g1, g2, n, p, M, kappa = kappa, alpha, K = NULL)
-#' LR$LR - K # Difference implementation - exact
+#' LR - K # Difference implementation - exact
 #' 
 LRmut = function(g1, g2, n, p, M, kappa, alpha, theta = 0, K = 0){
   if(is.null(K))
@@ -55,10 +54,6 @@ LRmut = function(g1, g2, n, p, M, kappa, alpha, theta = 0, K = 0){
   d <- g2[2]
   likDenominator = mut2:::l0(a, b, c, d, p, theta)
   LR = likNumerator/likDenominator
-  lower.bound = kappa[1] + kappa[2]*K + kappa[3]*K^2
-  pa = min(p)
-  term = (1-K*(1-pa))/pa
-  upper.bound = kappa[1] + kappa[2]*term + kappa[3]*term^2
-  list("lower" = lower.bound, "LR" = LR, "upper" = upper.bound)
+  LR
 }
 

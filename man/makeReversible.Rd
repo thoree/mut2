@@ -9,7 +9,7 @@ makeReversible(mutmat, method = "MH", afreq = NULL, check = TRUE)
 \arguments{
 \item{mutmat}{A mutation matrix.}
 
-\item{method}{Character.}
+\item{method}{Character. MH, PM or BA conversions.}
 
 \item{afreq}{A vector with allele frequencies 
 of the same length as the size of mutmat.}

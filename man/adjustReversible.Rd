@@ -2,7 +2,7 @@
 % Please edit documentation in R/adjustReversible.R
 \name{adjustReversible}
 \alias{adjustReversible}
-\title{Adjusts Metropolis - Hasting balanced mutation matrix}
+\title{Adjusts reversible mutation matrix}
 \usage{
 adjustReversible(
   mutmat,
@@ -17,20 +17,20 @@ adjustReversible(
 
 \item{balancedMutmat}{Balanced,  mutation matrix.}
 
-\item{method}{Character.}
+\item{method}{Character. MH, PM or BA conversions.}
 
 \item{afreq}{A vector with allele frequencies. 
-of the same length as the size of mutmat.}
+of the same length as the size of \code{mutmat}.}
 
-\item{check}{Logical.}
+\item{check}{Logical. Checks if \code{balancedMutmat} is reversible.}
 }
 \value{
-Adjusted mutation matrix
+Adjusted mutation matrix.
 }
 \description{
-The Metropolis - Hastings conversion typically gives a mutation matrix with too small
-small mutation rates. The previously balanced mutation matrix is adjusted
-one in the original matrix.
+The Metropolis - Hastings conversions may give a mutation matrix \code{balancedMutmat}
+with too small expected mutation rate (gamma). The \code{balancedMutmat} matrix is adjusted
+to have expected mutation rate a equal to that of the original mutation matrix \code{mutmat}.
 }
 \details{
 If \code{balancedMutmat == NULL}, \code{mutmat} is first balanced.
@@ -53,7 +53,7 @@ adj = adjustReversible(mutmat, balancedMutmat = NULL,
 attr(mutmat, "rate") - attr(adj, "rate")
 }
 \seealso{
-[findReveversible()].
+[makeReversible()].
 }
 \author{
 Thore Egeland.

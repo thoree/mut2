@@ -1,17 +1,17 @@
-#' Adjusts Metropolis - Hasting balanced mutation matrix
+#' Adjusts reversible mutation matrix
 #' 
-#' The Metropolis - Hastings conversion typically gives a mutation matrix with too small
-#' small mutation rates. The previously balanced mutation matrix is adjusted
-#' one in the original matrix. 
+#' The Metropolis - Hastings conversions may give a mutation matrix \code{balancedMutmat}
+#' with too small expected mutation rate (gamma). The \code{balancedMutmat} matrix is adjusted
+#' to have expected mutation rate a equal to that of the original mutation matrix \code{mutmat}.
 #'  
 #' @param mutmat Original, non balanced,  mutation matrix.
 #' @param balancedMutmat Balanced,  mutation matrix.
-#' @param method Character.
+#' @param method Character. MH, PM or BA conversions. 
 #' @param afreq A vector with allele frequencies. 
-#' of the same length as the size of mutmat.
-#' @param check Logical.
+#' of the same length as the size of \code{mutmat}.
+#' @param check Logical. Checks if \code{balancedMutmat} is reversible.
 #' 
-#' @return Adjusted mutation matrix
+#' @return Adjusted mutation matrix.
 #' 
 #' @details If \code{balancedMutmat == NULL}, \code{mutmat} is first balanced.
 #' The adjusted balanced matrix is
@@ -23,7 +23,7 @@
 #' \code{alpha} is the ratio of the (expected mutation) rates of the original matrix,
 #' \code{mutmat} to the balanced version \code{balancedMutmat} and \code{I} is the identity matrix.
 #'  
-#' @seealso [findReveversible()].
+#' @seealso [makeReversible()]
 #' 
 #' @author Thore Egeland.
 #' 

@@ -9,10 +9,10 @@ reasonableMutationMatrix(mutmat, p, verbose = FALSE)
 \arguments{
 \item{mutmat}{A mutation matrix.}
 
-\item{verbose}{Logical.}
-
-\item{afreq}{A vector with allele frequencies 
+\item{p}{A vector with allele frequencies 
 of the same length as the size of mutmat.}
+
+\item{verbose}{Logical.}
 }
 \value{
 Number of cases where pj < mij
@@ -24,8 +24,8 @@ Entries where  pj < mij are unreasonable and are detected
 n = 4
 p = 1:n/sum(1:n)
 names(p) = 1:n
-mutmat = mutationMatrix("equal", afreq = p, rate = 0.5)
-reasonableMutationMatrix(mutmat, p, verbose = F)
+mutmat = mutationMatrix("equal", p, rate = 0.5)
+reasonableMutationMatrix(mutmat, p, verbose = FALSE)
 
 }
 \author{

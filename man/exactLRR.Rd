@@ -12,7 +12,7 @@ exactLRR(
   ids = c(1, 3),
   method = "PM",
   adjust = FALSE,
-  ln = F
+  ln = FALSE
 )
 }
 \arguments{
@@ -30,7 +30,9 @@ of one or more pedigree members.}
 
 \item{method}{Character specifying reversing method.}
 
-\item{character}{ln Logical.}
+\item{adjust}{Logical.}
+
+\item{ln}{Logical.}
 }
 \value{
 Expected ratio and likelihoods

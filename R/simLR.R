@@ -5,8 +5,6 @@
 #'  
 #' @param M List of mutation matrices, one for each marker.
 #' @param R List of reversed mutation matrices, one for each marker.
-#' @param markerNames Character vector, names of markers
-#' @param method Character, reversing method.
 #' @param ped1 A \code{ped} object.
 #' @param ids A numeric with ID labels of one or more pedigree members.
 #' @param nsim Integer.     
@@ -43,18 +41,18 @@
 #'   afreq = x)
 #'   mat
 #' })
-#' mN = names(NorwegianFrequencies)
 #' simLRR(M, markerNames = mN, nsim = 10, seed = 177)
 #' }
 
 
-simLR = function(M, ped1 = nuclearPed(1), ids = c(1,3), 
+simLR = function(M, R, ped1 = nuclearPed(1), ids = c(1,3), 
                   nsim = 2, seed = NULL){
   set.seed(seed)
+  n = dim(M)[1]
   unr = list(singleton(ids[1]), singleton(ids[2]))
     for (i in 1:n){
-      ped1 = addMarker(ped1, mutmod = M[[i]], afreq = attr(M[[i]], "afreq"), name = mN[i])
-      ped2 = addMarker(ped2, mutmod = R[[i]], afreq = attr(R[[i]], "afreq"), name = mN[i])
+      ped1 = addMarker(ped1, mutmod = M[[i]], afreq = attr(M[[i]], "afreq"), name = name(M[i]))
+      ped2 = addMarker(ped2, mutmod = R[[i]], afreq = attr(R[[i]], "afreq"), name = name(R[i]))
     }
   # Simulations under numerator
   simM = profileSim(ped1, N = nsim, ids = ids)
