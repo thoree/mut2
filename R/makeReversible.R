@@ -5,7 +5,7 @@
 #' balanced matrix matrix.
 #'
 #' @param mutmat A mutation matrix.
-#' @param method Character.
+#' @param method Character. MH, PM or BA conversions. 
 #' @param afreq A vector with allele frequencies 
 #' of the same length as the size of mutmat.
 #' @param check Logical.
