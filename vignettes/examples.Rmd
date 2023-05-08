@@ -80,8 +80,38 @@ expected mutation rate
     P3 = makeReversible(Q, afreq = p, method = "BA")
     P3
 ```
+# Checking mutation matrices
+Create matrices based on database `NorwegianFrequencies'.
 
-# Example 2: Comparing transformations
+```{r}
+db = NorwegianFrequencies
+nAlleles = unlist(lapply(db, length))
+mN = names(db)
+M = lapply(db, function(x){
+                          mat = mutationMatrix("proportional",
+                          alleles = names(x),
+                          rate = 0.003, 
+                          rate2 = 0.000001,
+                          range = 0.1,
+                          afreq = x)
+          mat
+          })
+```
+
+Check matrices
+```{r}
+gamma = lapply(M, function(x) expectedMutationRate(x, afreq = NULL))
+numerator = lapply(M, function(x) {p = attr(x, "afreq");1-sum(p^2)})
+K = unlist(gamma)/unlist(numerator)
+res = lapply(M, function(x) reasonableMutationMatrix(x, p = NULL, verbose = F))
+names(res) = mN
+R = lapply(M, function(x) makeReversible(x, method = "BA"))
+res2 = lapply(R, function(x) reasonableMutationMatrix(x, p = NULL, verbose = F))
+names(res2) = mN
+sum(unlist(res2))
+```
+
+# Example 3: Comparing transformations
 
 We first compare PM to MH.
 ```{r, cache = TRUE, eval = F}

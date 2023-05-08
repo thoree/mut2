@@ -2,7 +2,7 @@
 % Please edit documentation in R/exactLRR.R
 \name{exactLRR}
 \alias{exactLRR}
-\title{Ratio of LRs and likelihood exact for one marker}
+\title{Ratio of LRs and likelihoods calculated exactly for one marker}
 \usage{
 exactLRR(
   M,

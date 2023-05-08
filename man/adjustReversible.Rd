@@ -53,7 +53,7 @@ adj = adjustReversible(mutmat, balancedMutmat = NULL,
 attr(mutmat, "rate") - attr(adj, "rate")
 }
 \seealso{
-[makeReversible()].
+[makeReversible()]
 }
 \author{
 Thore Egeland.

@@ -18,10 +18,15 @@ compareLRR(M, R, ped = nuclearPed(1), ids = c(1, 3), ln = FALSE)
 \item{ln}{character  Logical.}
 }
 \value{
-Statistics evaluation transformation
+The smallest value (min), the expected value and standard deviation wrt the
+numerator and the largest value.
 }
 \description{
 The ratio Z = LR(M,p)/LR(R,p) is calculated one marker.
+}
+\details{
+This gies summary statistics, the complete distribution for one marker
+is provided by mut2::exactLRR.
 }
 \examples{
 # Example One marker. PO case.
@@ -45,9 +50,10 @@ R[[2]] = makeReversible(M[[2]], method = "PM", afreq = p)
 names(M) = names(R) = paste0("L", 1:2)
 res2 = compareLRR(M, R)
 res3 = compareLRR(M, R, ln = TRUE)
+
 }
 \seealso{
-[makeReversible()].
+[exactLRR()].
 }
 \author{
 Thore Egeland.
