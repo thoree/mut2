@@ -17,8 +17,34 @@
 #' @export
 #' 
 #' @examples
-#' p = c(0.2, 0.3,  0.5)
-#' stepwiseReversible(alleles = 1:3, afreq = p, rate = 0.05, range = 0.1)
+#' # Example 1. Small example
+#' # Three alleles checked, equals stationary stepwise in R Familias
+#' afreq = c(0.2, 0.3,  0.5)
+#' alleles = 1:3
+#' gamma = 0.05
+#' delta = 0.1
+#' R1 = stepwiseReversible(alleles = alleles, afreq = afreq, rate = gamma, range = delta)
+#' library(Familias)
+#' R2 = Familias:::FamiliasLocus(afreq, alleles, MutationModel = "Stepwise", 
+#'              Stabilization = "PM", MutationRate = gamma, 
+#'              MutationRange = delta)$maleMutationMatrix
+#' max(abs(as.matrix(R1) - R2))
+#' 
+#' # Example 2 Larger example
+#' n = 100
+#' afreq = runif(n)
+#' afreq =afreq/sum(afreq)
+#' afreq = rep(1/n,n)
+#' alleles = 1:n
+#' gamma = min(afreq) 
+#' gamma = 2*(n-1)*min(afreq)^2
+#' delta = 0.1 
+#' R1 = stepwiseReversible(alleles = alleles, afreq = afreq, rate = gamma, range = delta)
+#' library(Familias)
+#' R2 = Familias:::FamiliasLocus(afreq, alleles, MutationModel = "Stepwise", 
+#'              Stabilization = "PM", MutationRate = gamma, 
+#'              MutationRange = delta)$maleMutationMatrix
+#' max(abs(as.matrix(R1) - R2))
 #' \dontrun{
 #' # Impossible parameter settings
 #' p = c(0.01, 0.99)
@@ -36,32 +62,24 @@
 
 stepwiseReversible = function(alleles, afreq, rate, range){
   if(!is.integer(alleles))
-    stop("alleles needs to be integer")
+    stop("alleles needs to be integers")
+    # remaining checking will be taken care of by `mutationModel` below
     n = length(afreq)
-    # Construct the matrix S used in the first part of the construction
-    S = matrix(ncol = n, nrow =  n, 0)
-    for (i in 1:n)
-      for(j in setdiff(1:n,i))
-        S[i,j] = range^{abs(i-j)}
-    for (i in 1:n)
-      S[i,i] = -sum(S[i,])
-    diagVector = diag(S)
-    lambda = rate/(-sum(diagVector))
-    # Find largest possibe rate
-    rateMax = min(-afreq/diagVector)*(-sum(diagVector))
-    if(rateMax < rate)
-      stop("Impossible parameter settings. Max rate = ", rateMax)
+    # Below the explicit formula for the transition probabilities is used with
+    # rate = \gamma and range = \delta
+
+    R = matrix(ncol = n, nrow = n, 0)
+
+      for (i in 1:n){
+        for(j in setdiff(1:n,i)){
+            a = (1-range^n)/(1-range)
+            R[i,j] = rate * (1 -range) * range^{abs(i-j)}/
+                     (2*range*(n-a))*(1/afreq[i])
+          }
+        R[i,i] = 1 -sum(R[i,-i])   
+      }
     
-    Q = matrix(ncol = n, nrow = n, 0)
-    for (i in 1:n)
-      for(j in setdiff(1:n,i))
-        Q[i,j] = lambda*S[i,j]/afreq[i]
-    
-    for (i in 1:n)
-      Q[i,i] = 1 - sum(Q[i,-i])
-    dimnames(Q) = list(alleles, alleles)
-    gamma = expectedMutationRate(Q, afreq)
-    Q = mutationModel(matrix = Q, model = "custom",  afreq = afreq)
-    attr(Q, "rate") = gamma 
-    list(M = Q, overallMutationRate = gamma, maxMutationRate = rateMax, )
+    dimnames(R) = list(alleles, alleles)
+    R = mutationModel(matrix = R, model = "custom",  afreq = afreq)
+    R
 }

@@ -25,8 +25,34 @@ A reversible stepwise mutation model is constructed.
 The approach of Dawid el al. (SJS, 2001) is implemented.
 }
 \examples{
-p = c(0.2, 0.3,  0.5)
-stepwiseReversible(alleles = 1:3, afreq = p, rate = 0.05, range = 0.1)
+# Example 1. Small example
+# Three alleles checked, equals stationary stepwise in R Familias
+afreq = c(0.2, 0.3,  0.5)
+alleles = 1:3
+gamma = 0.05
+delta = 0.1
+R1 = stepwiseReversible(alleles = alleles, afreq = afreq, rate = gamma, range = delta)
+library(Familias)
+R2 = Familias:::FamiliasLocus(afreq, alleles, MutationModel = "Stepwise", 
+             Stabilization = "PM", MutationRate = gamma, 
+             MutationRange = delta)$maleMutationMatrix
+max(abs(as.matrix(R1) - R2))
+
+# Example 2 Larger example
+n = 100
+afreq = runif(n)
+afreq =afreq/sum(afreq)
+afreq = rep(1/n,n)
+alleles = 1:n
+gamma = min(afreq) 
+gamma = 2*(n-1)*min(afreq)^2
+delta = 0.1 
+R1 = stepwiseReversible(alleles = alleles, afreq = afreq, rate = gamma, range = delta)
+library(Familias)
+R2 = Familias:::FamiliasLocus(afreq, alleles, MutationModel = "Stepwise", 
+             Stabilization = "PM", MutationRate = gamma, 
+             MutationRange = delta)$maleMutationMatrix
+max(abs(as.matrix(R1) - R2))
 \dontrun{
 # Impossible parameter settings
 p = c(0.01, 0.99)
