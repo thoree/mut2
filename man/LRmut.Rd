@@ -39,6 +39,7 @@ calculated for a pair of non-inbred individuals comparing a kappa to unrelated.
 \examples{
 
 # Parent offspring relationship LR
+library(pedmut)
 g1 = c(1,1)
 g2 = c(2,2)
 p = c("1" = 0.2, "2" = 0.8)
