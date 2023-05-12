@@ -16,57 +16,17 @@ stepwiseReversible(alleles, afreq, rate, range)
 \item{range}{A positive number.}
 }
 \value{
-A reversible stepwise mutation model.
+A reversible stepwise mutation model with expected mutation rate equal input rate.
 }
 \description{
-A reversible stepwise mutation model is constructed.
+Reversible stepwise mutation model
 }
 \details{
 The approach of Dawid el al. (SJS, 2001) is implemented.
 }
 \examples{
-# Example 1. Small example
-# Three alleles checked, equals stationary stepwise in R Familias
-afreq = c(0.2, 0.3,  0.5)
-alleles = 1:3
-gamma = 0.05
-delta = 0.1
-R1 = stepwiseReversible(alleles = alleles, afreq = afreq, rate = gamma, range = delta)
-library(Familias)
-R2 = Familias:::FamiliasLocus(afreq, alleles, MutationModel = "Stepwise", 
-             Stabilization = "PM", MutationRate = gamma, 
-             MutationRange = delta)$maleMutationMatrix
-max(abs(as.matrix(R1) - R2))
+R = stepwiseReversible(alleles = 1:3, afreq = c(0.2, 0.3,  0.5), rate = 0.001, range = 0.1)
 
-# Example 2 Larger example
-n = 100
-afreq = runif(n)
-afreq =afreq/sum(afreq)
-afreq = rep(1/n,n)
-alleles = 1:n
-gamma = min(afreq) 
-gamma = 2*(n-1)*min(afreq)^2
-delta = 0.1 
-R1 = stepwiseReversible(alleles = alleles, afreq = afreq, rate = gamma, range = delta)
-library(Familias)
-R2 = Familias:::FamiliasLocus(afreq, alleles, MutationModel = "Stepwise", 
-             Stabilization = "PM", MutationRate = gamma, 
-             MutationRange = delta)$maleMutationMatrix
-max(abs(as.matrix(R1) - R2))
-\dontrun{
-# Impossible parameter settings
-p = c(0.01, 0.99)
-stepwiseReversible(alleles = 1:2, afreq = p, rate = 0.05, range = 0.1)
-# Not well behaved:
-p = c(0.5, 0.5)
-stepwiseReversible(alleles = 1:2, afreq = p, rate = 0.6, range = 0.1)
-
-db = NorwegianFrequencies
-m = db$D3S1358 # Only integers
-alleles = as.integer(names(m))
-afreq = as.double(m)
-M = stepwiseReversible(alleles, afreq, rate = min(afreq), range = 0.1)
-}
 }
 \author{
 Thore Egeland.
