@@ -59,7 +59,7 @@ p_{ii}=1-\sum_{i\neq j} p_{ij},
 \end{align}
 which preserves the expected mutation rate:
 ```{r}
-    P2 = findReversible(Q, afreq = p, method = "AV")
+    P2 = findReversible(Q, afreq = p, method = "PM")
     P2
 ```
 

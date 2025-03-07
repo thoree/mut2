@@ -13,11 +13,11 @@ adjustReversible(
 )
 }
 \arguments{
-\item{mutmat}{Original, non balanced,  mutation matrix.}
+\item{mutmat}{Original mutation matrix.}
 
-\item{balancedMutmat}{Balanced,  mutation matrix.}
+\item{balancedMutmat}{Balanced, mutation matrix. If, NULL, balanced.}
 
-\item{method}{Character.}
+\item{method}{Character.  'MH','PR' or 'BA'.}
 
 \item{afreq}{A vector with allele frequencies. 
 of the same length as the size of mutmat.}
@@ -29,8 +29,8 @@ Adjusted mutation matrix
 }
 \description{
 The Metropolis - Hastings conversion typically gives a mutation matrix with too small
-small mutation rates. The previously balanced mutation matrix is adjusted
-one in the original matrix.
+small mutation rate. The previously balanced mutation matrix is adjusted
+to have the same mutation rate as the original matrix.
 }
 \details{
 If \code{balancedMutmat == NULL}, \code{mutmat} is first balanced.
@@ -48,9 +48,12 @@ library(pedmut)
 afreq = c(0.1, 0.3, 0.4, 0.2)
 names(afreq) = 1:4
 mutmat = mutationMatrix("onestep", alleles = 1:4, rate = 0.02)
-balancedMutmat = findReversible(mutmat, afreq = afreq)
-adj = adjustReversible(mutmat, balancedMutmat, afreq = afreq,  check = TRUE)
+balancedMutmatMH = findReversible(mutmat, afreq = afreq, method = "MH")
+adj = adjustReversible(mutmat, balancedMutmatMH, afreq = afreq,  check = TRUE)
 attr(mutmat, "rate") - attr(adj, "rate")
+
+# Does 'PR' give adjusted matrix directly?:
+balancedMutmatPR = findReversible(mutmat, afreq = afreq, method = "PR")
 }
 \seealso{
 [findReveversible()].

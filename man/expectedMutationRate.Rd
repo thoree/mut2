@@ -4,7 +4,7 @@
 \alias{expectedMutationRate}
 \title{Expected mutation rate of a mutation matrix}
 \usage{
-expectedMutationRate(mutmat, afreq, check = TRUE)
+expectedMutationRate(mutmat, afreq = NULL, check = TRUE)
 }
 \arguments{
 \item{mutmat}{A mutation matrix.}

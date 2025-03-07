@@ -6,3 +6,5 @@ commandsMut2.R
 inst/doc
 /doc/
 /Meta/
+README.Rmd 
+data-raw

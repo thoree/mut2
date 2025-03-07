@@ -4,12 +4,12 @@
 \alias{findReversible}
 \title{Find reversible mutation matrix}
 \usage{
-findReversible(mutmat, method = "MH", afreq = NULL, check = TRUE)
+findReversible(mutmat, method = "BA", afreq = NULL, check = TRUE)
 }
 \arguments{
 \item{mutmat}{A mutation matrix.}
 
-\item{method}{Character.}
+\item{method}{Character. 'MH','PR' or 'BA'}
 
 \item{afreq}{A vector with allele frequencies 
 of the same length as the size of mutmat.}
@@ -33,11 +33,17 @@ The default, \code{method = "MH"}, gives a balanced matrix with off diagonal ele
 
 where \code{q_{ij}} and \code{p_i} are the elements of the original mutation
 matrix and the allele frequencies, respectively. 
-The alternative, \code{method = "AV"}, gives a balanced matrix with off diagonal elements
+The default method \code{method = "BA"}, appears to be the best. In paper `PR`
+is called`PE` to avoid confusion with the PR transformation to stationaity.
 
 \code{(p_i q_{ij} + p_j q_{ji} ) / (2p_i)}
 
-if \code{q_{ji} < p_i, i neq j} (and may otherwise fail to balance).
+if \code{q_{ji} < p_i, i neq j} (and may otherwise fail to balance). 
+The expected mutation rate is preserved.
+
+The method \code{method = "BA"}, gives a balanced matrix with off diagonal elements
+
+\code{p_j q_{ij}q_{ji} / (p_i q_{ij} + (p_j q_{ji})}.
 }
 \examples{
 library(pedmut)
@@ -45,16 +51,14 @@ n = 4
 p = 1:n/sum(1:n)
 names(p) = 1:n
 mutmat = mutationMatrix("onestep", rate = 0.02, afreq = p, alleles = 1:n)
-findReversible(mutmat)
-findReversible(mutmat, method = "AV")
+R1 = findReversible(mutmat, method = "MH")
+expectedMutationRate(R1)
+isReversible(R1)
+R2 = findReversible(mutmat, method = "PR")
+isReversible(R2)
 
-Q = matrix(ncol = 2, c(0.9,0.9, 0.1, 0.1))
-Q = matrix(ncol = 2, c(0.99, 0.01, 0.01, 0.99))
-p = c(0.01, 0.99)
-mutmat = mutationMatrix("custom", matrix = Q, alleles = 1:2)
-findReversible(mutmat, afreq = p)
-# AVerage balancing not possible:
-findReversible(mutmat, method = "AV", afreq = p)
+R3 = findReversible(mutmat, method = "BA")
+isReversible(R3)
 }
 \author{
 Thore Egeland

@@ -7,12 +7,12 @@ Authors@R: c(
     person("Thore", "Egeland", , "thore.egeland@nmbu.no", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-3465-8885"))
   )
-Description: The mutation matrix is balanced using the Metropolis - Hastings algorithm.
+Description: Making mutation models reversible and testing
+License: GPL (>= 2)
 Maintainer: Thore Egeland <Thore.Egeland@nmbu.no>
-Depends: R (>= 3.2.0)
-Imports: pedmut
-License: GPL(>=2)
-RoxygenNote: 7.2.3
+Depends: R (>= 3.2.0), pedsuite, pedmut
+Imports: expm
+RoxygenNote: 7.3.2
 Suggests: 
     knitr,
     rmarkdown

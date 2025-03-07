@@ -5,7 +5,7 @@
 #' balanced matrix matrix.
 #'
 #' @param mutmat A mutation matrix.
-#' @param method Character.
+#' @param method Character. 'MH','PR' or 'BA'
 #' @param afreq A vector with allele frequencies 
 #' of the same length as the size of mutmat.
 #' @param check Logical.
@@ -20,12 +20,17 @@
 #' 
 #' where \code{q_{ij}} and \code{p_i} are the elements of the original mutation
 #' matrix and the allele frequencies, respectively. 
-#' The alternative, \code{method = "AV"}, gives a balanced matrix with off diagonal elements
+#' The default method \code{method = "BA"}, appears to be the best. In paper `PR`
+#' is called`PE` to avoid confusion with the PR transformation to stationaity.
 #' 
 #' \code{(p_i q_{ij} + p_j q_{ji} ) / (2p_i)}
 #' 
-#' if \code{q_{ji} < p_i, i neq j} (and may otherwise fail to balance).
+#' if \code{q_{ji} < p_i, i neq j} (and may otherwise fail to balance). 
+#' The expected mutation rate is preserved.
 #' 
+#' The method \code{method = "BA"}, gives a balanced matrix with off diagonal elements
+#' 
+#' \code{p_j q_{ij}q_{ji} / (p_i q_{ij} + (p_j q_{ji})}.
 #' 
 #' @author Thore Egeland
 #' 
@@ -37,47 +42,53 @@
 #' p = 1:n/sum(1:n)
 #' names(p) = 1:n
 #' mutmat = mutationMatrix("onestep", rate = 0.02, afreq = p, alleles = 1:n)
-#' findReversible(mutmat)
-#' findReversible(mutmat, method = "AV")
+#' R1 = findReversible(mutmat, method = "MH")
+#' expectedMutationRate(R1)
+#' isReversible(R1)
+#' R2 = findReversible(mutmat, method = "PR")
+#' isReversible(R2)
 #' 
-#' Q = matrix(ncol = 2, c(0.9,0.9, 0.1, 0.1))
-#' Q = matrix(ncol = 2, c(0.99, 0.01, 0.01, 0.99))
-#' p = c(0.01, 0.99)
-#' mutmat = mutationMatrix("custom", matrix = Q, alleles = 1:2)
-#' findReversible(mutmat, afreq = p)
-#' # AVerage balancing not possible:
-#' findReversible(mutmat, method = "AV", afreq = p)
+#' R3 = findReversible(mutmat, method = "BA")
+#' isReversible(R3)
 
 
-findReversible = function(mutmat, method = "MH", afreq = NULL, check = TRUE){ 
+
+findReversible = function(mutmat, method = "BA", afreq = NULL, check = TRUE){ 
   if(check)
     validateMutationMatrix(mutmat)
   if (is.null(afreq))
     afreq = attr(mutmat, "afreq")
-
+  if(is.null(afreq))
+    stop("No allele frequencies provided.")
   n = length(afreq)   
   P1 =  matrix(ncol = n, nrow = n, 0)
   
   if(method == "MH"){
     # Metropolis - Hastings. 
-    # Also diagonal elements are calculated for simplicity,
-    # but they are not used.
     for (i in 1:n)
-     for (j in 1:n){
-       if (afreq[i] * mutmat[i,j] > 0)
+     for (j in (1:n)[-i]){
+       if (mutmat[i,j] > 0)
           P1[i,j]  = mutmat[i,j] * min(1,(afreq[j] * mutmat[j,i])/
                                          (afreq[i] * mutmat[i,j]))
      }
   }
-  else if (method == "AV") {
-    #Try average balancing
+  else if (method == "PR") {
+    # PR Preserved expected Mutation rate method
     for (i in 1:n)
-      for (j in 1:n)
+      for (j in (1:n)[-i])
         P1[i,j]  = (afreq[i] * mutmat[i,j] + afreq[j] * mutmat[j,i])/
                  (2 * afreq[i])
-  }
+    }
+  else if (method == "BA")
+    # BArker trannsformation
+    for (i in 1:n)
+      for (j in (1:n)[-i]){
+        if (mutmat[i,j] > 0 | mutmat[j,i] > 0)
+          P1[i,j]  = afreq[j] * (mutmat[i,j] * mutmat[j,i])/
+                                (afreq[i] * mutmat[i,j] +afreq[j] * mutmat[j,i])
+        }
   else
-    stop("Methods needs to be 'MH' or 'AV'")
+    stop("Methods needs to be 'MH','PR' or 'BA' ")
   
   # Find diagonal elements
   diag(P1) = 0
@@ -85,7 +96,10 @@ findReversible = function(mutmat, method = "MH", afreq = NULL, check = TRUE){
   diag(P1) = 1 - s
   
   dimnames(P1) = dimnames(mutmat)
-  valid = validateMutationMatrix(P1)
-  pedmut:::newMutationMatrix(P1, afreq = afreq, model = "custom",
+  if(any(as.matrix(P1) < 0))
+    P1 = NA
+  else 
+    P1 =  pedmut:::newMutationMatrix(P1, afreq = afreq, model = "custom",
                              rate = expectedMutationRate(P1, afreq))
+  P1
 }

@@ -20,11 +20,13 @@
 #' expectedMutationRate(mutmat, afreq = p)
 #' 
 
-expectedMutationRate = function(mutmat, afreq, check = TRUE) {
+expectedMutationRate = function(mutmat, afreq = NULL, check = TRUE) {
   if(check)
     validateMutationMatrix(mutmat)
   
   if (is.null(afreq))
     afreq = attr(mutmat, "afreq")
+  if(is.null(afreq))
+    stop("Allele freuencies needed")
   sum(afreq * (1-diag(mutmat)))
 }
