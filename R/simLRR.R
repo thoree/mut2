@@ -1,33 +1,34 @@
 #' Simulate LRR
-#' 
-#' The ratio Z = LR(M,p)/LR(R,p) is simulated where 
+#'
+#' The ratio Z = LR(M,p)/LR(R,p) is simulated where
 #' M is a list of mutation matrices and R a reversed version.
 #' The alternative hypothesis is that all individuals are unrelated and
 #' so it does not matter if matrix M or R is used.
-#' 
-#'  
+#'
+#'
 #' @param M List of mutation matrices, one for each marker.
 #' @param R List of reversed mutation matrices, one for each marker.
 #' @param markerNames Character vector, names of markers
 #' @param method Character, reversing method.
 #' @param ped1 A \code{ped} object.
 #' @param ids A numeric with ID labels of one or more pedigree members.
-#' @param nsim Integer.     
+#' @param nsim Integer.
 #' @param seed Integer.
-#' 
+#'
 #' @details
 #' If \code{R == NULL}, mutation matrices are reversed.
-#' 
+#'
 #' @return LRR
-#' 
+#'
 #' @seealso [findReversible()].
-#' 
+#'
 #' @author Thore Egeland.
-#' 
+#'
 #' @export
-#' 
+#'
 #' @examples
-#' 
+#' library(pedmut)
+#' library(pedtools)
 #' p = c("1" = 0.1, "2" = 0.9)
 #' M = list(mutationMatrix("equal", rate = 0.001, afreq = p),
 #'          mutationMatrix("equal", rate = 0.001, afreq = p))
@@ -39,7 +40,7 @@
 #' M = lapply(NorwegianFrequencies, function(x){
 #'   mat = mutationMatrix("stequal",
 #'   alleles = names(x),
-#'   rate = 0.001, 
+#'   rate = 0.001,
 #'   rate2 = 0,
 #'   range = 0,
 #'   afreq = x)
@@ -50,7 +51,7 @@
 #' }
 
 
-simLRR = function(M, R = NULL, markerNames, method = "PR", ped1 = nuclearPed(1), ids = c(1,3), 
+simLRR = function(M, R = NULL, markerNames, method = "PR", ped1 = nuclearPed(1), ids = c(1,3),
                   nsim = 2, seed = NULL){
   if(nsim < 2)
     stop("Need nsim >= 2")
@@ -71,7 +72,7 @@ simLRR = function(M, R = NULL, markerNames, method = "PR", ped1 = nuclearPed(1),
       }
     }
   }
-  
+
   #Add markers with mutation matrices M
   ped2 = ped1
   unr = list(singleton(ids[1]), singleton(ids[2]))
@@ -84,7 +85,7 @@ simLRR = function(M, R = NULL, markerNames, method = "PR", ped1 = nuclearPed(1),
       ped2 = addMarker(ped2, mutmod = R[[i]], afreq = attr(R[[i]], "afreq"), name = mN[i])
     }
   }
-  
+
   # Simulations under numerator
   simM = profileSim(ped1, N = nsim, ids = ids, verbose = F)
   simR = lapply(simM, function(x) transferMarkers(x, ped2, erase = FALSE))
@@ -92,7 +93,7 @@ simLRR = function(M, R = NULL, markerNames, method = "PR", ped1 = nuclearPed(1),
   likR = unlist(lapply(simR, function(x) prod(likelihood(x))))
   LRR.M = likM/likR
 
-  
+
   # Simulations under denominator
   simR = profileSim(ped2, N = nsim, ids = ids, verbose = F)
   simM = lapply(simR, function(x) transferMarkers(x, ped1, erase = FALSE))

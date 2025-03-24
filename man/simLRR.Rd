@@ -36,7 +36,7 @@ simLRR(
 LRR
 }
 \description{
-The ratio Z = LR(M,p)/LR(R,p) is simulated where 
+The ratio Z = LR(M,p)/LR(R,p) is simulated where
 M is a list of mutation matrices and R a reversed version.
 The alternative hypothesis is that all individuals are unrelated and
 so it does not matter if matrix M or R is used.
@@ -45,7 +45,8 @@ so it does not matter if matrix M or R is used.
 If \code{R == NULL}, mutation matrices are reversed.
 }
 \examples{
-
+library(pedmut)
+library(pedtools)
 p = c("1" = 0.1, "2" = 0.9)
 M = list(mutationMatrix("equal", rate = 0.001, afreq = p),
          mutationMatrix("equal", rate = 0.001, afreq = p))
@@ -57,7 +58,7 @@ res = simLRR(M[[1]], markerNames = mN[1], nsim = 2, seed = 177)
 M = lapply(NorwegianFrequencies, function(x){
   mat = mutationMatrix("stequal",
   alleles = names(x),
-  rate = 0.001, 
+  rate = 0.001,
   rate2 = 0,
   range = 0,
   afreq = x)

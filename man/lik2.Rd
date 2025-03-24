@@ -40,7 +40,7 @@ where the alleles may or may not differ. We calculate the likelihood assuming
 a relationship described by kappa.
 }
 \examples{
-library(pedsuite)
+library(pedtools)
 library(pedmut)
 # Example 1 Parent offspring relationship
 p = c("1" = 0.2, "2" = 0.8)
@@ -56,19 +56,19 @@ l1.formula = p[1]^2*K*p[2]^2
 l1 - l1.formula
 
 # Example 2 Double first cousins
-n = c(0, 4, 4, 0) 
+n = c(0, 4, 4, 0)
 kappa = c(9,6,1)/16
 alpha = c(0, 0.5,0.5, 0)
 g1 = c(1,1); g2 = c(2,2)
 lik1 = lik2(g1, g2, n, p, M, kappa, alpha)
-lik0 = lik2(g1, g2, n = rep(0,4), p, M, 
+lik0 = lik2(g1, g2, n = rep(0,4), p, M,
             kappa = c(1,0,0), alpha = rep(0,4))
 LR = lik1/lik0
 # Formula
-LR.formula = kappa[1] + 
-           kappa[2]*(1-(1-K)^4)+ 
+LR.formula = kappa[1] +
+           kappa[2]*(1-(1-K)^4)+
            kappa[3]*(1-(1-K)^4) * (1-(1-K)^4)
-LR - LR.formula            
+LR - LR.formula
 }
 \references{
 Egeland, Pinto and Amorim, FSI:Genetics (2017),

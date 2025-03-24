@@ -1,9 +1,7 @@
 \docType{package}
 \name{mut2}
 \alias{mut2}
-\alias{mut2-package}
-\title{mut2: Balancing mutation matrix}
+\title{mut2: Transforming mutation models to reversibility}
 \description{
-The aim is to balance mutation matrices essentially using the 
-Metropolis - Hastings algorithms.
+The main aim is to transform to reversible mutation models and evaluate these transformations
 }

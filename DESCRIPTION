@@ -3,17 +3,24 @@ Package: mut2
 Title: Balancing mutation matrix
 Version: 1.0
 Date: 2023-03-19
-Authors@R: c(
+Authors@R: 
     person("Thore", "Egeland", , "thore.egeland@nmbu.no", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-3465-8885"))
-  )
-Description: Making mutation models reversible and testing
-License: GPL (>= 2)
 Maintainer: Thore Egeland <Thore.Egeland@nmbu.no>
-Depends: R (>= 3.2.0), pedsuite, pedmut
-Imports: expm
-RoxygenNote: 7.3.2
+Description: Making mutation models reversible and testing.
+License: GPL (>= 2)
+Depends: 
+    R (>= 3.2.0)
+Imports: 
+    expm,
+    forrel,
+    pedmut,
+    pedtools,
+    pedprobr
 Suggests: 
     knitr,
     rmarkdown
-VignetteBuilder: knitr
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+RoxygenNote: 7.3.2

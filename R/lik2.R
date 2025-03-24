@@ -26,7 +26,7 @@
 #' @export
 #' @importFrom expm %^%
 #' @examples
-#' library(pedsuite)
+#' library(pedtools)
 #' library(pedmut)
 #' # Example 1 Parent offspring relationship
 #' p = c("1" = 0.2, "2" = 0.8)
@@ -40,24 +40,24 @@
 #' K = gamma/(1- sum(p^2))
 #' l1.formula = p[1]^2*K*p[2]^2
 #' l1 - l1.formula
-#' 
+#'
 #' # Example 2 Double first cousins
-#' n = c(0, 4, 4, 0) 
+#' n = c(0, 4, 4, 0)
 #' kappa = c(9,6,1)/16
 #' alpha = c(0, 0.5,0.5, 0)
 #' g1 = c(1,1); g2 = c(2,2)
 #' lik1 = lik2(g1, g2, n, p, M, kappa, alpha)
-#' lik0 = lik2(g1, g2, n = rep(0,4), p, M, 
+#' lik0 = lik2(g1, g2, n = rep(0,4), p, M,
 #'             kappa = c(1,0,0), alpha = rep(0,4))
 #' LR = lik1/lik0
 #' # Formula
-#' LR.formula = kappa[1] + 
-#'            kappa[2]*(1-(1-K)^4)+ 
+#' LR.formula = kappa[1] +
+#'            kappa[2]*(1-(1-K)^4)+
 #'            kappa[3]*(1-(1-K)^4) * (1-(1-K)^4)
-#' LR - LR.formula            
+#' LR - LR.formula
 
 lik2 <- function(g1, g2, n, p, M, kappa, alpha, theta = 0){
-  
+
   l0 <- function(a, b, c, d, p, theta) {
     pa <- p[a]
     pb <- (b==a)*theta+(1-theta)*p[b]
@@ -65,7 +65,7 @@ lik2 <- function(g1, g2, n, p, M, kappa, alpha, theta = 0){
     pd <- (((d==a)+(d==b)+(d==c))*theta+(1-theta)*p[d])/(1+2*theta)
     2^(-(a == b) - (c == d))*4*pa*pb*pc*pd
   }
-  
+
   l1 <- function(a, b, c, d, g, p, M, theta) {
     Mg <- expm::'%^%'(M, g)
     pa <- p[a]
@@ -80,7 +80,7 @@ lik2 <- function(g1, g2, n, p, M, kappa, alpha, theta = 0){
     pa <- p[a]
     pb <- (b==a)*theta+(1-theta)*p[b]
     2^(-(a == b) - (c == d))*pa*pb*
-      (MnP[a, c] * MnD[b, d] + MnP[b, c] * MnD[a, d] + 
+      (MnP[a, c] * MnD[b, d] + MnP[b, c] * MnD[a, d] +
          MnP[a, d] * MnD[b, c] + MnP[b, d] * MnD[a, c])
   }
   a <- g1[1]
@@ -89,12 +89,12 @@ lik2 <- function(g1, g2, n, p, M, kappa, alpha, theta = 0){
   d <- g2[2]
   beta <- alpha[1] + alpha[4]
   beta <- c(beta, 1-beta)
-  lik <- kappa[1]*l0(a, b, c, d, p, theta)+ 
+  lik <- kappa[1]*l0(a, b, c, d, p, theta)+
     kappa[2] * alpha[1] * l1(a, b, c, d, g = n[1], p, M, theta) +
-    kappa[2] * alpha[2] * l1(a, b, c, d, g = n[2], p, M, theta) + 
-    kappa[2] * alpha[3] * l1(a, b, c, d, g = n[3], p, M, theta) + 
-    kappa[2] * alpha[4] * l1(a, b, c, d, g = n[4], p, M, theta) + 
-    kappa[3] * beta[1] * l2(a, b, c, d, n[1], n[4], p, M, theta)+ 
+    kappa[2] * alpha[2] * l1(a, b, c, d, g = n[2], p, M, theta) +
+    kappa[2] * alpha[3] * l1(a, b, c, d, g = n[3], p, M, theta) +
+    kappa[2] * alpha[4] * l1(a, b, c, d, g = n[4], p, M, theta) +
+    kappa[3] * beta[1] * l2(a, b, c, d, n[1], n[4], p, M, theta)+
     kappa[3] * beta[2] * l2(a, b, c, d, n[2], n[3], p, M, theta)
   lik
 }

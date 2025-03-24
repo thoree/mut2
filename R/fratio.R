@@ -9,7 +9,7 @@
 #' @export
 #' @importFrom expm %^%
 #' @examples
-#' library(pedsuite)
+#' library(pedtools)
 #' library(pedmut)
 #' n = 2
 #' p = c(0.2, 0.8)
@@ -17,7 +17,7 @@
 #' mutmat = mutationMatrix("equal", rate = 0.02, alleles = 1:2, afreq = p)
 #' res = snpExample(mutmat, afreq = p, adjust = FALSE)
 #' fratio(mutmat, res[[1]])
-#' 
+#'
 fratio = function(A,B){
   if(any(is.na(A)))
     return(NA)

@@ -20,8 +20,9 @@
 #'
 #' @export
 #' @examples
-#' library(pedsuite)
+#' library(pedtools)
 #' library(pedmut)
+#' library(forrel)
 #' tabfRatio(db = NorwegianFrequencies[1:2], rate = 0.0001, mutmodel = 'equal')
 
 

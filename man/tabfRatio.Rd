@@ -43,8 +43,9 @@ If logical is TRUE, a stationary version is found and its fratio
 to original matrix and also a check is performed to if it is also reversible
 }
 \examples{
-library(pedsuite)
+library(pedtools)
 library(pedmut)
+library(forrel)
 tabfRatio(db = NorwegianFrequencies[1:2], rate = 0.0001, mutmodel = 'equal')
 }
 \author{

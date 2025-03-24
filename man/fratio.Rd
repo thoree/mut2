@@ -18,7 +18,7 @@ Double
 Calculates fratio, distance between matrices
 }
 \examples{
-library(pedsuite)
+library(pedtools)
 library(pedmut)
 n = 2
 p = c(0.2, 0.8)
