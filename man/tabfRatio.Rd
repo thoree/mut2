@@ -39,7 +39,7 @@ Table (tab) and complete output (all)
 Produce table
 }
 \details{
-If logical is TRUE, a stationary version is found and its fratio 
+If logical is TRUE, a stationary version is found and its fratio
 to original matrix and also a check is performed to if it is also reversible
 }
 \examples{

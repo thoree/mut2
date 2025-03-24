@@ -1,5 +1,5 @@
 #' Produce table comparing transformations based on exact calculations
-#' 
+#'
 #' Produce table
 #'
 #' @param db allele frequencies
@@ -10,14 +10,14 @@
 #' @param relabel Logical
 #' @param stationary Logical
 #' @param nr Integer 0 complete, 1,2,3 gives Table 1,2,3
-#' 
+#'
 #' @return Table (tab) and complete output (all)
-#' 
-#' @details If logical is TRUE, a stationary version is found and its fratio 
+#'
+#' @details If logical is TRUE, a stationary version is found and its fratio
 #' to original matrix and also a check is performed to if it is also reversible
-#' 
+#'
 #' @author Thore Egeland
-#' 
+#'
 #' @export
 #' @examples
 #' library(pedsuite)
@@ -47,39 +47,39 @@ tabfRatio = function(db = NULL, rate = 0.001, rate2 = 0.00001, range = 0.1,
     if(relabel) #always relabel
       np = 1:length(np)
     if(mutmodel == 'stepwise')
-      M = mutationMatrix(mutmodel, alleles = np, rate = rate, rate2 = rate2, 
+      M = mutationMatrix(mutmodel, alleles = np, rate = rate, rate2 = rate2,
                        range = range, afreq = p)
-    else 
+    else
       M = mutationMatrix(mutmodel, alleles = np, rate = rate, afreq = p)
-    
+
     MH = findReversible(M,  method = 'MH')
     MH = adjustReversible(M, MH)
-    
+
     BA = findReversible(M,  method = 'BA')
     BA = adjustReversible(M, BA)
-    
+
     PR = findReversible(M,  method = 'PR')
     if (integerMarker[i])
      DA = mut2::stepwiseReversible(alleles = as.integer(np), afreq = p, rate = rate, range = range)
-    else 
+    else
      DA = NA
 
     fRatioMH[i] = fratio(M, MH)
     fRatioBA[i] = fratio(M, BA)
     fRatioPR[i] = fratio(M, PR)
     fRatioDA[i] = fratio(M, DA)
-    
+
     if(stationary){
      MSTAT = stabilize(M)
      fRatioStationary[i] = fratio(M, MSTAT)
      alsorev[i] = isReversible(MSTAT)
     }
-    
+
     mindiagMH[i] = min(diag(MH))
     mindiagBA[i] = min(diag(BA))
     mindiagPR[i] = ifelse(class(PR)[1] == 'mutationMatrix', min(diag(PR)), NA)
     mindiagDA[i] = ifelse(class(DA)[1] == 'mutationMatrix', min(diag(DA)), NA)
-    
+
     bM[i] = isBounded(M)
     bMH[i] = isBounded(MH)
     bBA[i] = isBounded(BA)
