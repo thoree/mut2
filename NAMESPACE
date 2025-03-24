@@ -3,7 +3,6 @@
 export(adjustReversible)
 export(boundsGamma)
 export(compareLRR)
-export(exactLRR)
 export(expectedMutationRate)
 export(findReversible)
 export(fratio)
