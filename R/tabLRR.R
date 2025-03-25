@@ -8,6 +8,7 @@
 #' @param range Double
 #' @param nsim  Integer
 #' @param seed  Integer
+#' @param maks Logical
 #'
 #' @return LRR table
 #'
@@ -17,6 +18,8 @@
 #'
 #' @export
 #' @examples
+#' library(forrel)
+#' library(KLINK)
 #' db = getFreqDatabase(KLINK::halfsib[[1]])
 #' tabLRR(db = db)
 

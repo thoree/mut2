@@ -12,7 +12,7 @@
 #'
 #' @author Thore Egeland
 #'
-#' #@export
+#' @export
 #'
 #' @examples
 #' library(pedmut)

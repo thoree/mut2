@@ -26,6 +26,8 @@ tabLRR(
 \item{nsim}{Integer}
 
 \item{seed}{Integer}
+
+\item{maks}{Logical}
 }
 \value{
 LRR table
@@ -37,6 +39,8 @@ Produce table
 LRR table
 }
 \examples{
+library(forrel)
+library(KLINK)
 db = getFreqDatabase(KLINK::halfsib[[1]])
 tabLRR(db = db)
 }

@@ -16,7 +16,8 @@ Imports:
     forrel,
     pedmut,
     pedtools,
-    pedprobr
+    pedprobr,
+    KLINK
 Suggests: 
     knitr,
     rmarkdown

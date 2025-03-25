@@ -33,6 +33,4 @@ res = snpExample(mutmat, afreq = p, adjust = FALSE)
 }
 \author{
 Thore Egeland
-
-#@export
 }
