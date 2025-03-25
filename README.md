@@ -2,8 +2,8 @@
 
 # R library mut2
 
-The aim of `mut2` is to provide functions that balance mutation matrices
-and evaluate and exemplify mutation models
+The aim of `mut2` is to provide functions that make mutation models
+reversible and evaluate and exemplify the resulting mutation models
 
 ## Installation
 
@@ -64,7 +64,7 @@ M
 #> Lumpable: Always
 ```
 
-The \`PR’ transformations preserves the expected mytation rate as
+The \`PR’ transformations preserves the expected mutation rate as
 claimed
 
 ``` r
@@ -108,7 +108,7 @@ MMHstar = adjustReversible(M, MMH)
 MBAstar = adjustReversible(M, MBA)
 ```
 
-For a SNP marker, the PR-reversible model coincides with the staionary
+For a SNP marker, the PR-reversible model coincides with the stationary
 model and therefore we can also find the transformation from
 
 ``` r
@@ -155,7 +155,7 @@ Table3 = tabfRatio(db = db, rate = 0.001, rate2 = 0.00001, range = 0.1,
 
 #### Table1
 
-Regarding “the transformation BA has smallest *f* for all markers
+Regarding “the transformation BA has smallest *f* for all markers”
 
 ``` r
 table(apply(Table1[,1:3], 1, function(x) (1:3)[which.min(x)]))
