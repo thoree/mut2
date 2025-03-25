@@ -25,7 +25,7 @@ The three reversible transformations and exact
 \examples{
 library(pedmut)
 n = 2
-p = c("1" = 0.2, "2" = 0.8)#' 
+p = c("1" = 0.2, "2" = 0.8)#'
 m = rbind(c(0.997, 0.003), c(0.003, 0.997))
 mutmat = mutationMatrix("custom", matrix  = m, afreq = p, alleles = 1:2)
 res = snpExample(mutmat, afreq = p, adjust = FALSE)
@@ -33,4 +33,6 @@ res = snpExample(mutmat, afreq = p, adjust = FALSE)
 }
 \author{
 Thore Egeland
+
+#@export
 }

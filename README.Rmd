@@ -14,9 +14,10 @@ knitr::opts_chunk$set(
 )
 ```
 
-# mut2
+# R library mut2
 
-The aim om `mut2` is to provide functions that balance mutation matrices.
+The aim of `mut2` is to provide functions that balance mutation matrices
+and evaluate and exemplify mutation models
 
 
 ## Installation
@@ -38,14 +39,64 @@ We first load some libraries:
 ```{r}
 library(mut2, quietly = T)
 library(forrel, quietly = T)
+library(pedmut)
 ```
 
 We state that, for the expected heterozygosity,
-"typical values for multi-allelic forensic markers are in the range (0.60, 0.95)". This is based on the updated version of the database NorwegianFrequencies in
+"typical values for multi-allelic forensic markers are in the range (0.60, 0.95)". This is based on the updated version of the database NorwegianFrequencies:
 ```{r}
 db = getFreqDatabase(KLINK::halfsib[[1]])
 H = lapply(db, function(x) 1 - sum(x^2))
 range(H)
+```
+
+### Example 3.1 SNP markers
+
+
+The mutation matrix is seen not to be stationary from
+```{r}
+p = c("1" = 0.2, "2" = 0.8)
+M = mutationMatrix("equal", alleles = names(p), rate =  0.003, afreq = p)
+M
+```
+The `PR' transformations preserves the expected mytation rate as claimed
+```{r}
+MPR = findReversible(M, method = 'PR')
+MPR
+```
+The $f$ value  0.0075/0.003 = 2.5 can alternatively be found from
+```{r}
+fratio(M, MPR) 
+```
+
+The mutation rates for the two other transformations are smaller
+```{r}
+MMH = findReversible(M, method = 'MH')
+MBA = findReversible(M, method = 'BA')
+c("rateMH2" = attributes(MMH)$rate, "rateBA" = attributes(MBA)$rate)
+```
+The last two transformations can be adjusted to have the original mutation rate
+(output omitted)
+```{r}
+MMHstar = adjustReversible(M, MMH)
+MBAstar = adjustReversible(M, MBA)
+```
+For a SNP marker, the PR-reversible model coincides with
+the staionary model and therefore we can also find
+the transformation from
+
+```{r}
+pedmut:::stabilize(M)
+```
+which is an implementation of the PM transformation in Familias
+(output omitted)
+
+```{r, eval = F}
+MPM = Familias:::FamiliasLocus(frequencies = p,
+                            allelenames = names(p),
+                            MutationModel = "Equal",
+                            MutationRate = 0.003,
+                            Stabilization = "PM")
 ```
 
 ### Table 1,2,3

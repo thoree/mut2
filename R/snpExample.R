@@ -1,35 +1,35 @@
 #' SNP example
-#' 
+#'
 #' The three reversible transformations and exact
 #'
 #' @param mutmat A mutation matrix.
-#' @param afreq A vector with allele frequencies 
+#' @param afreq A vector with allele frequencies
 #' @param check Logical
 #' @param adjust Logical
-#' 
+#'
 #' @return Balanced mutation matrix. The expected mutation rate
 #' of the balanced matrix is returned as `rate`.
-#' 
+#'
 #' @author Thore Egeland
-#' 
-#' @export
-#' 
+#'
+#' #@export
+#'
 #' @examples
 #' library(pedmut)
 #' n = 2
-#' p = c("1" = 0.2, "2" = 0.8)#' 
+#' p = c("1" = 0.2, "2" = 0.8)#'
 #' m = rbind(c(0.997, 0.003), c(0.003, 0.997))
 #' mutmat = mutationMatrix("custom", matrix  = m, afreq = p, alleles = 1:2)
 #' res = snpExample(mutmat, afreq = p, adjust = FALSE)
-#' 
-snpExample = function(mutmat, afreq = NULL, check = TRUE, adjust = TRUE){ 
+#'
+snpExample = function(mutmat, afreq = NULL, check = TRUE, adjust = TRUE){
   if(check)
     validateMutationMatrix(mutmat)
   if (is.null(afreq))
     afreq = attr(mutmat, "afreq")
   if(is.null(afreq))
     stop("No allele frequencies provided.")
-  n = length(afreq) 
+  n = length(afreq)
   if( n!= 2)
     stop("Only for SNP-s")
   gammaM = expectedMutationRate(mutmat, afreq = afreq)
