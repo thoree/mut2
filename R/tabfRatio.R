@@ -1,4 +1,4 @@
-#' Produce table comparing transformations based on exact calculations
+#' Produce table comparing transformations
 #'
 #' Produce table
 #'
@@ -13,8 +13,7 @@
 #'
 #' @return Table (tab) and complete output (all)
 #'
-#' @details If logical is TRUE, a stationary version is found and its fratio
-#' to original matrix and also a check is performed to if it is also reversible
+#' @details If logical is TRUE, a stationary version is found
 #'
 #' @author Thore Egeland
 #'

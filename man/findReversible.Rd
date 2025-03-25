@@ -11,39 +11,39 @@ findReversible(mutmat, method = "BA", afreq = NULL, check = TRUE)
 
 \item{method}{Character. 'MH','PR' or 'BA'}
 
-\item{afreq}{A vector with allele frequencies 
+\item{afreq}{A vector with allele frequencies
 of the same length as the size of mutmat.}
 
 \item{check}{Logical.}
 }
 \value{
-Balanced mutation matrix. The expected mutation rate
+Reversible mutation matrix. The expected mutation rate
 of the balanced matrix is returned as `rate`.
 }
 \description{
-The Metropolis - Hastings algorithm is used to convert 
-a mutation matrix to a reversible one, i.e., find the
-balanced matrix matrix.
+The Metropolis - Hastings algorithm is used to convert
+a mutation matrix to a reversible one.
 }
 \details{
-Two different approaches are implemented.
-The default, \code{method = "MH"}, gives a balanced matrix with off diagonal elements
+Three different approaches are implemented.
+The \code{method = "MH"}, based on the traditional proposal of MCMC,
+gives a balanced matrix with off diagonal elements
 
 \code{q_{ij} min(1, p_j/p_i * q_{ji}/q_{ij})}
 
 where \code{q_{ij}} and \code{p_i} are the elements of the original mutation
-matrix and the allele frequencies, respectively. 
-The default method \code{method = "BA"}, appears to be the best. In paper `PR`
-is called`PE` to avoid confusion with the PR transformation to stationaity.
-
-\code{(p_i q_{ij} + p_j q_{ji} ) / (2p_i)}
-
-if \code{q_{ji} < p_i, i neq j} (and may otherwise fail to balance). 
-The expected mutation rate is preserved.
+matrix and the allele frequencies, respectively.
 
 The method \code{method = "BA"}, gives a balanced matrix with off diagonal elements
 
 \code{p_j q_{ij}q_{ji} / (p_i q_{ij} + (p_j q_{ji})}.
+
+The  method \code{method = "PR"} is given by
+
+\code{(p_i q_{ij} + p_j q_{ji} ) / (2p_i)}
+
+if \code{q_{ji} < p_i, i neq j} (and may otherwise fail to balance).
+The expected mutation rate is preserved.
 }
 \examples{
 library(pedmut)

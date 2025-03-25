@@ -2,7 +2,7 @@
 % Please edit documentation in R/tabfRatio.R
 \name{tabfRatio}
 \alias{tabfRatio}
-\title{Produce table comparing transformations based on exact calculations}
+\title{Produce table comparing transformations}
 \usage{
 tabfRatio(
   db = NULL,
@@ -39,8 +39,7 @@ Table (tab) and complete output (all)
 Produce table
 }
 \details{
-If logical is TRUE, a stationary version is found and its fratio
-to original matrix and also a check is performed to if it is also reversible
+If logical is TRUE, a stationary version is found
 }
 \examples{
 library(pedtools)
