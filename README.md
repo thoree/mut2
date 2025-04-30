@@ -25,19 +25,58 @@ We first load some libraries:
 library(mut2, quietly = T)
 library(forrel, quietly = T)
 library(pedmut, quietly = T)
-#> 
-#> Attaching package: 'pedmut'
-#> The following object is masked from 'package:mut2':
-#> 
-#>     stepwiseReversible
+library(norSTR, quietly = T)
 ```
+
+### Should we recommend PR, checked
+
+``` r
+nsim = 1000
+seed = 1729
+resE = mut2:::wrapLRR(nsim = nsim, mutMod = "equal", seed = seed, log2 = TRUE)
+
+# Remove some few simulation where PR is not defined (also removed for other transformations):
+index = (1:nrow(resE))[resE$transformed == T]
+res = resE[index,]
+
+# Magnus' plot function:
+
+quickpng = function(filename, expr, w = dev.size()[1], h = dev.size()[2], units = "in", res = 300) {
+  png(filename, width = w, height = h, units = units, res = res)
+  on.exit(dev.off())
+  expr
+}
+
+quickpng("equal.png", 
+{par(mfrow = c(2,2))
+boxplot(split(res$E.LRR, res$method),  main = "  E(log2 LRR)")
+boxplot(split(res$RMSD, res$method), main = "RMSD log2  LRR (approx std. dev.)")
+boxplot(split(res$Min, res$method), main = "min log2 LRR")
+boxplot(split(res$Max, res$method), main = "max log2 LRR")}
+)
+
+
+resS = mut2:::wrapLRR(nsim = nsim, mutMod = "stepwise", seed = seed, log2 = TRUE)
+index = (1:nrow(resS))[resS$transformed == T]
+res = resS[index,]
+
+quickpng("stepwise.png", 
+         {par(mfrow = c(2,2))
+           boxplot(split(res$E.LRR, res$method),  main = "  E(log2 LRR)")
+           boxplot(split(res$RMSD, res$method), main = "RMSD log2  LRR (approx std. dev.)")
+           boxplot(split(res$Min, res$method), main = "min log2 LRR")
+           boxplot(split(res$Max, res$method), main = "max log2 LRR")}
+)
+```
+
+### Expected heterozygosity
 
 We state that, for the expected heterozygosity, “typical values for
 multi-allelic forensic markers are in the range (0.60, 0.95)”. This is
 based on the updated version of the database NorwegianFrequencies:
 
 ``` r
-db = getFreqDatabase(KLINK::halfsib[[1]])
+db = norSTR::norwayDB
 H = lapply(db, function(x) 1 - sum(x^2))
 range(H)
 #> [1] 0.6180022 0.9490541
@@ -55,32 +94,36 @@ M
 #> 1 0.997 0.003
 #> 2 0.003 0.997
 #> 
-#> Model: equal 
+#> Model: Equal 
 #> Rate: 0.003 
 #> Frequencies: 0.2, 0.8 
 #> 
+#> Bounded: Yes 
 #> Stationary: No 
 #> Reversible: No 
-#> Lumpable: Always
+#> Lumpable: Always 
+#> Overall rate: 0.003
 ```
 
 The \`PR’ transformations preserves the expected mutation rate as
 claimed
 
 ``` r
-MPR = findReversible(M, method = 'PR')
+MPR = makeReversible(M, method = 'PR')
 MPR
 #>          1        2
 #> 1 0.992500 0.007500
 #> 2 0.001875 0.998125
 #> 
-#> Model: custom 
+#> Model: Custom 
 #> Rate: 0.003 
 #> Frequencies: 0.2, 0.8 
 #> 
+#> Bounded: Yes 
 #> Stationary: Yes 
 #> Reversible: Yes 
-#> Lumpable: Always
+#> Lumpable: Always 
+#> Overall rate: 0.003
 ```
 
 The *f* value 0.0075/0.003 = 2.5 can alternatively be found from
@@ -93,37 +136,39 @@ fratio(M, MPR)
 The mutation rates for the two other transformations are smaller
 
 ``` r
-MMH = findReversible(M, method = 'MH')
-MBA = findReversible(M, method = 'BA')
+MMH = makeReversible(M, method = 'MH')
+MBA = makeReversible(M, method = 'BA')
 c("rateMH2" = attributes(MMH)$rate, "rateBA" = attributes(MBA)$rate)
 #> rateMH2  rateBA 
-#> 0.00120 0.00096
+#>   0.003   0.003
 ```
 
 The last two transformations can be adjusted to have the original
 mutation rate (output omitted)
 
 ``` r
-MMHstar = adjustReversible(M, MMH)
-MBAstar = adjustReversible(M, MBA)
+MMHstar = adjustRate(MMH, newrate = 0.003)
+MBAstar = adjustRate(MBA, newrate = 0.003)
 ```
 
 For a SNP marker, the PR-reversible model coincides with the stationary
 model and therefore we can also find the transformation from
 
 ``` r
-pedmut:::stabilize(M)
+pedmut:::makeStationary(M)
 #>          1        2
 #> 1 0.992500 0.007500
 #> 2 0.001875 0.998125
 #> 
-#> Model: custom 
+#> Model: Custom 
 #> Rate: 0.003 
 #> Frequencies: 0.2, 0.8 
 #> 
+#> Bounded: Yes 
 #> Stationary: Yes 
 #> Reversible: Yes 
-#> Lumpable: Always
+#> Lumpable: Always 
+#> Overall rate: 0.003
 ```
 
 which is an implementation of the PM transformation in Familias (output
@@ -137,7 +182,7 @@ MPM = Familias:::FamiliasLocus(frequencies = p,
                             Stabilization = "PM")
 ```
 
-## Section 3.2 Comparing …transformations
+## OBSOLETE: Section 3.2 Comparing …transformations
 
 ### Table 1,2,3 (3,4,5 in current version of ms)
 
@@ -159,17 +204,12 @@ Regarding “the transformation BA has smallest *f* for all markers”
 
 ``` r
 table(apply(Table1[,1:3], 1, function(x) (1:3)[which.min(x)]))
-#> 
-#>  2 
-#> 50
 ```
 
 Regarding minimum value on diagonal
 
 ``` r
 apply(Table1[,4:6], 2, function(x) min(x))
-#>       mMH       mBA       mPR 
-#> 0.9949567 0.9946379 0.9370625
 ```
 
 Regarding “All transformed matrices are bounded”, this is generally true
@@ -182,9 +222,6 @@ foo = tabfRatio(db = db,  rate = 0.001, mutmodel = "equal", relabel = F,
                  stationary = T, nr = 0)
 foo = foo[, c("bMH", "bBA")]
 table(foo)
-#>    bBA
-#> bMH  Y
-#>   Y 50
 ```
 
 #### Table2
@@ -193,17 +230,12 @@ Regarding f-values
 
 ``` r
 table(apply(Table2[,1:3], 1, function(x) (1:3)[which.min(x)]))
-#> 
-#>  1  2 
-#>  1 28
 ```
 
 Regarding minimum diagonal values
 
 ``` r
 apply(Table2[,4:6], 2, function(x) min(x))
-#>       mMH       mBA       mPR 
-#> 0.9960640 0.9948979 0.8611900
 ```
 
 Regarding boundedness
@@ -214,16 +246,7 @@ foo =  tabfRatio(db = db, rate = 0.001, mutmodel = "onestep", relabel = T,
 foo =  foo[foo$int == "Y",]
 foo = foo[, c("bMH", "bBA")]
 table(foo)
-#>    bBA
-#> bMH  N  Y
-#>   N  4  0
-#>   Y  0 25
 foo[foo[,1] == "N",]
-#>         bMH bBA
-#> TPOX      N   N
-#> D11S554   N   N
-#> APOAI1    N   N
-#> D17S906   N   N
 ```
 
 #### Table3
@@ -236,15 +259,10 @@ f-values and minima on diagonal:
 
 ``` r
 table(apply(int[,1:4], 1, function(x) (1:4)[which.min(x)]))
-#> 
-#>  2  4 
-#> 15 14
 ```
 
 ``` r
 apply(int[,5:8], 2, function(x) min(x))
-#>       mMH       mBA       mPR       mDA 
-#> 0.9960221 0.9948494 0.8724023 0.8738733
 ```
 
 Regarding boundedness, here’s a list with at least one of three
@@ -256,25 +274,6 @@ foo = tabfRatio(db = db, rate = 0.001, rate2 = 0.00001, range = 0.1,
 foo =  foo[foo$int == "Y",]
 foo = foo[, c("bMH", "bBA", "bDA")]
 foo[foo[,1] == "N" | foo[,2] == "N" | foo[,3] == "N" ,]
-#>               bMH bBA bDA
-#> TPOX            N   N   N
-#> D2S1338         Y   Y   N
-#> D3S1358         Y   Y   N
-#> D5S2800         Y   Y   N
-#> D5S818          Y   Y   N
-#> D7S3048         Y   Y   N
-#> D9S1122         Y   Y   N
-#> D10S1248        Y   Y   N
-#> D11S554         N   N   N
-#> APOAI1          N   N   N
-#> vWA             Y   Y   N
-#> D14S1434        Y   Y   N
-#> D16S539         Y   Y   N
-#> D17S906         N   N   N
-#> D17S1301        Y   Y   N
-#> D18S1364        Y   Y   N
-#> D22GATA198B05   Y   Y   N
-#> D22S1045        Y   Y   N
 ```
 
 ## Section 3.3 Comparing …simulation

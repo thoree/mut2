@@ -1,8 +1,8 @@
 Type: Package
 Package: mut2
-Title: Balancing mutation matrix
+Title: Mutation stuff
 Version: 1.0
-Date: 2023-03-19
+Date: 2025-04-28
 Authors@R: 
     person("Thore", "Egeland", , "thore.egeland@nmbu.no", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-3465-8885"))

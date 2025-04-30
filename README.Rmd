@@ -40,12 +40,57 @@ We first load some libraries:
 library(mut2, quietly = T)
 library(forrel, quietly = T)
 library(pedmut, quietly = T)
+library(norSTR, quietly = T)
 ```
+
+### Should we recommend PR, checked
+
+```{r, echo =T, eval = F}
+nsim = 1000
+seed = 1729
+resE = mut2:::wrapLRR(nsim = nsim, mutMod = "equal", seed = seed, log2 = TRUE)
+
+# Remove some few simulation where PR is not defined (also removed for other transformations):
+index = (1:nrow(resE))[resE$transformed == T]
+res = resE[index,]
+
+# Magnus' plot function:
+
+quickpng = function(filename, expr, w = dev.size()[1], h = dev.size()[2], units = "in", res = 300) {
+  png(filename, width = w, height = h, units = units, res = res)
+  on.exit(dev.off())
+  expr
+}
+
+quickpng("equal.png", 
+{par(mfrow = c(2,2))
+boxplot(split(res$E.LRR, res$method),  main = "  E(log2 LRR)")
+boxplot(split(res$RMSD, res$method), main = "RMSD log2  LRR (approx std. dev.)")
+boxplot(split(res$Min, res$method), main = "min log2 LRR")
+boxplot(split(res$Max, res$method), main = "max log2 LRR")}
+)
+
+
+resS = mut2:::wrapLRR(nsim = nsim, mutMod = "stepwise", seed = seed, log2 = TRUE)
+index = (1:nrow(resS))[resS$transformed == T]
+res = resS[index,]
+
+quickpng("stepwise.png", 
+         {par(mfrow = c(2,2))
+           boxplot(split(res$E.LRR, res$method),  main = "  E(log2 LRR)")
+           boxplot(split(res$RMSD, res$method), main = "RMSD log2  LRR (approx std. dev.)")
+           boxplot(split(res$Min, res$method), main = "min log2 LRR")
+           boxplot(split(res$Max, res$method), main = "max log2 LRR")}
+)
+```
+
+
+### Expected heterozygosity
 
 We state that, for the expected heterozygosity,
 "typical values for multi-allelic forensic markers are in the range (0.60, 0.95)". This is based on the updated version of the database NorwegianFrequencies:
 ```{r}
-db = getFreqDatabase(KLINK::halfsib[[1]])
+db = norSTR::norwayDB
 H = lapply(db, function(x) 1 - sum(x^2))
 range(H)
 ```
@@ -61,7 +106,7 @@ M
 ```
 The `PR' transformations preserves the expected mutation rate as claimed
 ```{r}
-MPR = findReversible(M, method = 'PR')
+MPR = makeReversible(M, method = 'PR')
 MPR
 ```
 The $f$ value  0.0075/0.003 = 2.5 can alternatively be found from
@@ -71,22 +116,22 @@ fratio(M, MPR)
 
 The mutation rates for the two other transformations are smaller
 ```{r}
-MMH = findReversible(M, method = 'MH')
-MBA = findReversible(M, method = 'BA')
+MMH = makeReversible(M, method = 'MH')
+MBA = makeReversible(M, method = 'BA')
 c("rateMH2" = attributes(MMH)$rate, "rateBA" = attributes(MBA)$rate)
 ```
 The last two transformations can be adjusted to have the original mutation rate
 (output omitted)
 ```{r}
-MMHstar = adjustReversible(M, MMH)
-MBAstar = adjustReversible(M, MBA)
+MMHstar = adjustRate(MMH, newrate = 0.003)
+MBAstar = adjustRate(MBA, newrate = 0.003)
 ```
 For a SNP marker, the PR-reversible model coincides with
 the stationary model and therefore we can also find
 the transformation from
 
 ```{r}
-pedmut:::stabilize(M)
+pedmut:::makeStationary(M)
 ```
 which is an implementation of the PM transformation in Familias
 (output omitted)
@@ -98,13 +143,13 @@ MPM = Familias:::FamiliasLocus(frequencies = p,
                             MutationRate = 0.003,
                             Stabilization = "PM")
 ```
-## Section 3.2 Comparing ...transformations
+## OBSOLETE: Section 3.2 Comparing ...transformations
 ### Table 1,2,3 (3,4,5 in current version of ms)
 
 We next consider the tables
 label{tab:comparison1} - label{tab:comparison3} , referred to in Section `Comparing mutation...'.
 
-```{r}
+```{r, eval = F}
 Table1 = tabfRatio(db = db,  rate = 0.001, mutmodel = "equal", relabel = F, 
                  stationary = T, nr = 1)
 Table2 = tabfRatio(db = db, rate = 0.001, mutmodel = "onestep", relabel = T, 
@@ -116,12 +161,12 @@ Table3 = tabfRatio(db = db, rate = 0.001, rate2 = 0.00001, range = 0.1,
 #### Table1 
 
 Regarding "the transformation BA has smallest $f$ for all markers"
-```{r}
+```{r, eval = FALSE}
 table(apply(Table1[,1:3], 1, function(x) (1:3)[which.min(x)]))
 ```
 
 Regarding minimum value on diagonal
-```{r}
+```{r, eval = FALSE}
 apply(Table1[,4:6], 2, function(x) min(x))
 ```
 
@@ -130,7 +175,7 @@ but not necessarily for the others as adjustment is performed.
 Below we extract the columns indicating boundedness and show that
 all are indeed bounded in this case:
 
-```{r}
+```{r, eval = FALSE}
 foo = tabfRatio(db = db,  rate = 0.001, mutmodel = "equal", relabel = F, 
                  stationary = T, nr = 0)
 foo = foo[, c("bMH", "bBA")]
@@ -140,18 +185,18 @@ table(foo)
 #### Table2
 
 Regarding f-values
-```{r}
+```{r, eval = FALSE}
 table(apply(Table2[,1:3], 1, function(x) (1:3)[which.min(x)]))
 ```
 
 Regarding minimum diagonal values
-```{r}
+```{r, eval = FALSE}
 apply(Table2[,4:6], 2, function(x) min(x))
 ```
 
 Regarding boundedness
 
-```{r}
+```{r, eval = FALSE}
 foo =  tabfRatio(db = db, rate = 0.001, mutmodel = "onestep", relabel = T, 
                  stationary = F, nr = 0)
 foo =  foo[foo$int == "Y",]
@@ -162,23 +207,23 @@ foo[foo[,1] == "N",]
 
 #### Table3
 
-```{r}
+```{r, eval = FALSE}
 int = Table3[Table3$int == "Y",] #integer
 ```
 f-values and minima on diagonal:
 
-```{r}
+```{r, eval = FALSE}
 table(apply(int[,1:4], 1, function(x) (1:4)[which.min(x)]))
 ```
 
-```{r}
+```{r, eval = F}
 apply(int[,5:8], 2, function(x) min(x))
 ```
 
 
 Regarding boundedness, here's a list with at least one of three unbounded:
 
-```{r}
+```{r, eval = FALSE}
 foo = tabfRatio(db = db, rate = 0.001, rate2 = 0.00001, range = 0.1, 
                 mutmodel = "stepwise", relabel = F, stationary = T, nr = 0)
 foo =  foo[foo$int == "Y",]

@@ -4,7 +4,7 @@
 \name{mut2-package}
 \alias{mut2}
 \alias{mut2-package}
-\title{mut2: Balancing mutation matrix}
+\title{mut2: Mutation stuff}
 \description{
 Making mutation models reversible and testing.
 }
