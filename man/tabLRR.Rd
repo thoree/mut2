@@ -39,10 +39,12 @@ Produce table
 LRR table
 }
 \examples{
+\dontrun{
 library(forrel)
 library(KLINK)
 db = getFreqDatabase(KLINK::halfsib[[1]])
 tabLRR(db = db)
+}
 }
 \author{
 Thore Egeland
