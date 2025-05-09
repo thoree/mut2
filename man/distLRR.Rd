@@ -12,16 +12,16 @@ distLRR(
   seed = NULL,
   log2 = FALSE,
   mutMod = "equal",
-  Rate = c(0.005, 0.005),
-  Rate2 = c(1e-06, 1e-06),
-  Range = c(0.1, 0.1),
+  rate = c(0.005, 0.005),
+  rate2 = c(1e-06, 1e-06),
+  range = c(0.1, 0.1),
   nAls = 4
 )
 }
 \arguments{
-\item{adjust}{Logical.}
+\item{adjust}{Logical. Transform to original mutation rate}
 
-\item{method}{Transformation.}
+\item{method}{Transformation. See `pedmut::makeReversible()`}
 
 \item{verbose}{Logical.}
 
@@ -29,29 +29,30 @@ distLRR(
 
 \item{seed}{Integer}
 
-\item{log2}{Logical.}
+\item{log2}{Logical. To get LR on log2}
 
 \item{mutMod}{character.}
 
-\item{Rate}{double.}
+\item{rate}{Double. See `pedmut::muationModel()`.}
 
-\item{Rate2}{Double.}
+\item{rate2}{Double. See `pedmut::muationModel()`}
 
-\item{nAls}{Integer.}
+\item{range}{Double. See `pedmut::muationModel()`}
 
-\item{range2}{Double.}
+\item{nAls}{Integer. No of alleles.}
 }
 \value{
-Summary of distribution of LRR
+Summary of distribution of LRR, with more details if `verbose = T`
 }
 \description{
 Finds distribution of LRR depending on allele frequencies.
 }
 \details{
-The allele frequencies are simulated. The LRR distribution is then
-exactly calculated using oneMarkerDistribution. RMSD (Root Mean Square
-Deviation) is the square root of
-E(LRR - E(LRR))^2, very close to SD(LRR) in our applications.
+The allele frequencies are simulated uniformly. The mutation
+parameters are simulated uniformly between provided minimum and maximum.
+The LRR distribution is then calculated exactlyusing
+`oneMarkerDistribution()`. The simulations are conditional on PR not failing
+(PR fails rarely).#'
 }
 \examples{
 distLRR()

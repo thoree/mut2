@@ -3,25 +3,26 @@
 #' Finds distribution of LRR depending on allele frequencies.
 #'
 #'
-#' @param adjust Logical.
-#' @param method Transformation.
+#' @param adjust Logical. Transform to original mutation rate
+#' @param method Transformation. See `pedmut::makeReversible()`
 #' @param verbose Logical.
 #' @param nsim integer.
 #' @param seed Integer
-#' @param log2 Logical.
+#' @param log2 Logical. To get LR on log2
 #' @param mutMod character.
-#' @param Rate double.
-#' @param Rate2 Double.
-#' @param range2 Double.
-#' @param nAls  Integer.
+#' @param rate Double. See `pedmut::muationModel()`.
+#' @param rate2 Double. See `pedmut::muationModel()`
+#' @param range Double. See `pedmut::muationModel()`
+#' @param nAls  Integer. No of alleles.
 #'
 #'
-#' @details The allele frequencies are simulated. The LRR distribution is then
-#' exactly calculated using oneMarkerDistribution. RMSD (Root Mean Square
-#' Deviation) is the square root of
-#' E(LRR - E(LRR))^2, very close to SD(LRR) in our applications.
+#' @details The allele frequencies are simulated uniformly. The mutation
+#' parameters are simulated uniformly between provided minimum and maximum.
+#' The LRR distribution is then calculated exactlyusing
+#' `oneMarkerDistribution()`. The simulations are conditional on PR not failing
+#' (PR fails rarely).#'
 #'
-#' @return Summary of distribution of LRR
+#' @return Summary of distribution of LRR, with more details if `verbose = T`
 #'
 #' @author Thore Egeland
 #'
@@ -34,16 +35,16 @@
 
 
 distLRR = function(adjust = TRUE, method = "PR", verbose = FALSE, nsim = 2,
-               seed = NULL, log2 = FALSE, mutMod = "equal", Rate = c(0.005, 0.005),
-               Rate2 = c(0.000001, 0.000001), Range = c(0.1, 0.1), nAls = 4){
+               seed = NULL, log2 = FALSE, mutMod = "equal", rate = c(0.005, 0.005),
+               rate2 = c(0.000001, 0.000001), range = c(0.1, 0.1), nAls = 4){
   ids = c(1,3)
   ped1 = nuclearPed()
   transformed = TRUE # Changed to FALSE if PR transform fails
   set.seed(seed)
 
-  Rate = runif(nsim, min = Rate[1], max = Rate[2])
-  Rate2 = runif(nsim, min = Rate2[1], max = Rate2[2])
-  Range = runif(nsim, min = Range[1], max = Range[2])
+  rate = runif(nsim, min = rate[1], max = rate[2])
+  rate2 = runif(nsim, min = rate2[1], max = rate2[2])
+  range = runif(nsim, min = range[1], max = range[2])
 
   dd = nAls*(nAls + 1)/2 # No of genotypes
   # To contain joint genotype probabilities under M and R:
@@ -53,8 +54,8 @@ distLRR = function(adjust = TRUE, method = "PR", verbose = FALSE, nsim = 2,
     p = runif(nAls)
     p = p/sum(p)
     names(p) = 1:nAls
-    M = mutationMatrix(model = mutMod, rate = Rate[i], rate2 = Rate2[i],
-                       range = Range[i], afreq = p)
+    M = mutationMatrix(model = mutMod, rate = rate[i], rate2 = rate2[i],
+                       range = range[i], afreq = p)
 
     if(method == "PR") {
       pm = M*p
