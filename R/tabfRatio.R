@@ -19,10 +19,12 @@
 #'
 #' @export
 #' @examples
+#' \dontrun{
 #' library(pedtools)
 #' library(pedmut)
 #' library(forrel)
 #' tabfRatio(db = NorwegianFrequencies[1:2], rate = 0.0001, mutmodel = 'equal')
+#' }
 
 
 tabfRatio = function(db = NULL, rate = 0.001, rate2 = 0.00001, range = 0.1,

@@ -28,46 +28,61 @@ library(pedmut, quietly = T)
 library(norSTR, quietly = T)
 ```
 
-### Should we recommend PR, checked
+### Should we recommend PR?
+
+A simulation experiment was performed to check if the recommendation of
+PR transformation could be verified. We used the function
+`mut::distLRR()`. Allele frequencies and mutation parameters were
+simulated as explained in the documentation with specific values shown
+below.
 
 ``` r
+nA = 5 #No of alleles. Allele freqs simulated uniformly
+verb = F
+log = T #log2 transformation of LRR
 nsim = 1000
+rate = c(0.0001, 0.01) #Value simulated uniformly on this interval, also below
+rate2 = 10^{c(-7,-5)}
+range = c(0.05,0.5)
+mutMod = "equal"
 seed = 1729
-resE = mut2:::wrapLRR(nsim = nsim, mutMod = "equal", seed = seed, log2 = TRUE)
-
-# Remove some few simulation where PR is not defined (also removed for other transformations):
-index = (1:nrow(resE))[resE$transformed == T]
-res = resE[index,]
-
-# Magnus' plot function:
-
-quickpng = function(filename, expr, w = dev.size()[1], h = dev.size()[2], units = "in", res = 300) {
-  png(filename, width = w, height = h, units = units, res = res)
-  on.exit(dev.off())
-  expr
-}
-
-quickpng("equal.png", 
-{par(mfrow = c(2,2))
-boxplot(split(res$E.LRR, res$method),  main = "  E(log2 LRR)")
-boxplot(split(res$RMSD, res$method), main = "RMSD log2  LRR (approx std. dev.)")
-boxplot(split(res$Min, res$method), main = "min log2 LRR")
-boxplot(split(res$Max, res$method), main = "max log2 LRR")}
-)
-
-
-resS = mut2:::wrapLRR(nsim = nsim, mutMod = "stepwise", seed = seed, log2 = TRUE)
-index = (1:nrow(resS))[resS$transformed == T]
-res = resS[index,]
-
-quickpng("stepwise.png", 
-         {par(mfrow = c(2,2))
-           boxplot(split(res$E.LRR, res$method),  main = "  E(log2 LRR)")
-           boxplot(split(res$RMSD, res$method), main = "RMSD log2  LRR (approx std. dev.)")
-           boxplot(split(res$Min, res$method), main = "min log2 LRR")
-           boxplot(split(res$Max, res$method), main = "max log2 LRR")}
-)
+BA = distLRR(nAls = nA, verbose = verb, method = "BA", mutMod = mutMod, 
+             log2 = log, nsim = nsim, rate = rate, seed = seed)
+MH = distLRR(nAls = nA, verbose = verb, method = "MH", mutMod = mutMod, 
+             log2 = log, nsim = nsim, rate = rate, seed = seed)
+PR = distLRR(nAls = nA, verbose = verb, method = "PR", mutMod = mutMod,
+             log2 = log, nsim = nsim, rate = rate, seed = seed)
+tab1 = rbind(BA,MH, PR)
+mutMod = "stepwise"
+BA = distLRR(nAls = nA, verbose = verb, method = "BA", mutMod = mutMod, 
+             log2 = log, nsim = nsim, rate = rate, rate2 = rate2, 
+             range = range, seed = seed)
+MH = distLRR(nAls = nA, verbose = verb, method = "MH", mutMod = mutMod, 
+             log2 = log, nsim = nsim, rate = rate, rate2 = rate2, 
+             range = range,  seed = seed) 
+PR = distLRR(nAls = nA, verbose = verb, method = "PR", mutMod = mutMod,
+             log2 = log, nsim = nsim, rate = rate, rate2 = rate2,
+             range = range, seed = seed)
+tab2 =  rbind(BA,MH, PR)
+tab = rbind(tab1, tab2)
 ```
+
+| mutMod   | transform |        mu |        sd |        min |     pMin |       max |     pMax |
+|:---------|:----------|----------:|----------:|-----------:|---------:|----------:|---------:|
+| equal    | BA        | 0.0000420 | 0.0109724 | -0.3472051 | 1.52e-05 | 0.3154393 | 2.32e-05 |
+| equal    | MH        | 0.0000487 | 0.0118155 | -0.3432213 | 1.53e-05 | 0.3259195 | 2.32e-05 |
+| equal    | PR        | 0.0000303 | 0.0093190 | -0.3632738 | 1.30e-05 | 0.2930584 | 2.05e-05 |
+| stepwise | BA        | 0.0000996 | 0.0170487 | -0.7842868 | 1.35e-05 | 0.7072154 | 1.13e-05 |
+| stepwise | MH        | 0.0001064 | 0.0177835 | -0.7603802 | 1.35e-05 | 0.7845368 | 1.13e-05 |
+| stepwise | PR        | 0.0000460 | 0.0113343 | -0.9413081 | 2.00e-06 | 0.5677689 | 5.70e-06 |
+
+Summary statistics for log2(LRR)
+
+THe PR transformations is superior in most respects: The expected
+log2(LRR), mu, is closest to zero, the standard deviation SD and the max
+is smallest. However, the minimum values is also smallest and this is
+the only point disfavoring PR. However, overall, the exoeriment
+indicates that PR remains the transformation of choice.
 
 ### Expected heterozygosity
 

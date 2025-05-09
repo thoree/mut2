@@ -45,6 +45,7 @@ so it does not matter if matrix M or R is used.
 If \code{R == NULL}, mutation matrices are reversed.
 }
 \examples{
+\dontrun{
 library(pedmut)
 library(pedtools)
 p = c("1" = 0.1, "2" = 0.9)
@@ -54,7 +55,6 @@ mN = c("L1", "L2")
 markerNames = mN; method = "PR"; ped1 = nuclearPed(1); ids = c(1,3); nsim = 2; seed = 17
 res = simLRR(M, markerNames = mN, nsim = 10, seed = 177)
 res = simLRR(M[[1]], markerNames = mN[1], nsim = 2, seed = 177)
-\dontrun{
 M = lapply(NorwegianFrequencies, function(x){
   mat = mutationMatrix("stequal",
   alleles = names(x),

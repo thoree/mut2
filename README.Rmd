@@ -43,47 +43,54 @@ library(pedmut, quietly = T)
 library(norSTR, quietly = T)
 ```
 
-### Should we recommend PR, checked
+### Should we recommend PR?
 
-```{r, echo =T, eval = F}
+A simulation experiment was performed to check if the recommendation of PR
+transformation could be verified. We used the function `mut::distLRR()`.
+Allele frequencies and mutation parameters were simulated as explained
+in the documentation with specific values shown below.
+
+```{r, echo = T, eval = F}
+nA = 5 #No of alleles. Allele freqs simulated uniformly
+verb = F
+log = T #log2 transformation of LRR
 nsim = 1000
+rate = c(0.0001, 0.01) #Value simulated uniformly on this interval, also below
+rate2 = 10^{c(-7,-5)}
+range = c(0.05,0.5)
+mutMod = "equal"
 seed = 1729
-resE = mut2:::wrapLRR(nsim = nsim, mutMod = "equal", seed = seed, log2 = TRUE)
-
-# Remove some few simulation where PR is not defined (also removed for other transformations):
-index = (1:nrow(resE))[resE$transformed == T]
-res = resE[index,]
-
-# Magnus' plot function:
-
-quickpng = function(filename, expr, w = dev.size()[1], h = dev.size()[2], units = "in", res = 300) {
-  png(filename, width = w, height = h, units = units, res = res)
-  on.exit(dev.off())
-  expr
-}
-
-quickpng("equal.png", 
-{par(mfrow = c(2,2))
-boxplot(split(res$E.LRR, res$method),  main = "  E(log2 LRR)")
-boxplot(split(res$RMSD, res$method), main = "RMSD log2  LRR (approx std. dev.)")
-boxplot(split(res$Min, res$method), main = "min log2 LRR")
-boxplot(split(res$Max, res$method), main = "max log2 LRR")}
-)
-
-
-resS = mut2:::wrapLRR(nsim = nsim, mutMod = "stepwise", seed = seed, log2 = TRUE)
-index = (1:nrow(resS))[resS$transformed == T]
-res = resS[index,]
-
-quickpng("stepwise.png", 
-         {par(mfrow = c(2,2))
-           boxplot(split(res$E.LRR, res$method),  main = "  E(log2 LRR)")
-           boxplot(split(res$RMSD, res$method), main = "RMSD log2  LRR (approx std. dev.)")
-           boxplot(split(res$Min, res$method), main = "min log2 LRR")
-           boxplot(split(res$Max, res$method), main = "max log2 LRR")}
-)
+BA = distLRR(nAls = nA, verbose = verb, method = "BA", mutMod = mutMod, 
+             log2 = log, nsim = nsim, rate = rate, seed = seed)
+MH = distLRR(nAls = nA, verbose = verb, method = "MH", mutMod = mutMod, 
+             log2 = log, nsim = nsim, rate = rate, seed = seed)
+PR = distLRR(nAls = nA, verbose = verb, method = "PR", mutMod = mutMod,
+             log2 = log, nsim = nsim, rate = rate, seed = seed)
+tab1 = rbind(BA,MH, PR)
+mutMod = "stepwise"
+BA = distLRR(nAls = nA, verbose = verb, method = "BA", mutMod = mutMod, 
+             log2 = log, nsim = nsim, rate = rate, rate2 = rate2, 
+             range = range, seed = seed)
+MH = distLRR(nAls = nA, verbose = verb, method = "MH", mutMod = mutMod, 
+             log2 = log, nsim = nsim, rate = rate, rate2 = rate2, 
+             range = range,  seed = seed) 
+PR = distLRR(nAls = nA, verbose = verb, method = "PR", mutMod = mutMod,
+             log2 = log, nsim = nsim, rate = rate, rate2 = rate2,
+             range = range, seed = seed)
+tab2 =  rbind(BA,MH, PR)
+tab = rbind(tab1, tab2)
 ```
 
+```{r, echo = F, eval = T}
+load("tab.RData")
+knitr::kable(tab, caption = "Summary statistics for log2(LRR)", format = "simple")
+```
+
+THe PR transformations is superior in most respects: The expected log2(LRR), mu,
+is closest to zero, the standard deviation SD and the max is smallest.
+However, the minimum values is also smallest and this is the only point 
+disfavoring PR. However, overall, the exoeriment indicates that PR remains
+the transformation of choice.
 
 ### Expected heterozygosity
 

@@ -18,10 +18,12 @@
 #'
 #' @export
 #' @examples
+#' \dontrun{
 #' library(forrel)
 #' library(KLINK)
 #' db = getFreqDatabase(KLINK::halfsib[[1]])
 #' tabLRR(db = db)
+#' }
 
 
 tabLRR = function(db = NULL, rate = 0.001, rate2 = 0.00001,
